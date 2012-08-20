@@ -18,18 +18,19 @@ public class OasthHttp {
 	private final static char[] directionLetters = { 'a', 'b' };
 	private final static StringBuilder sbu = new StringBuilder();
 
-	
-	//curl "http://oasth.gr/tools/lineStop.php" -A "Mozilla/5.0 (X11; Linux i686; rv:2.0b12) Gecko/20110222 Firefox/4.0b12" -H "Referer: http://oasth.gr/tools/busTimes.php" -d "bline=434&goes=a&lineStops=" 
-	//curl "http://oasth.gr/tools/lineStop_eng.php" -A "Mozilla/5.0 (X11; Linux i686; rv:2.0b12) Gecko/20110222 Firefox/4.0b12" -H "Referer: http://oasth.gr/tools/busTimes_eng.php" -d "bline=434&goes=b&lineStops=" 
+	private final static String LINE_NAME_URL_GR = "http://oasth.gr/tools/busTimes.php";
+	private final static String LINE_NAME_URL_EN = "http://oasth.gr/tools/busTimes_eng.php";
+	private final static String STOP_NAME_URL_GR = "http://oasth.gr/tools/lineStop.php";
+	private final static String STOP_NAME_URL_EN = "http://oasth.gr/tools/lineStop_eng.php";
+	private final static String STOP_NAME_POST_PARAMS = "bline=%d&goes=%c&lineStops=";
 
-
-	public static String getLineArrival(int lineId, int direction, int stopId)
+	public static String getLineArrival(String urlString,int lineId, int direction)
 			throws IOException {
 		long startTime0 = System.currentTimeMillis();
 
 		cleanSbu();
 
-		URL oracle = new URL("http://oasth.gr/tools/busTimes_eng.php");
+		URL oracle = new URL(urlString);
 		URLConnection yc = oracle.openConnection();
 
 		populateDesktopHttpHeaders(yc, false);
@@ -37,8 +38,8 @@ public class OasthHttp {
 		yc.setDoOutput(true);
 
 		OutputStreamWriter wr = new OutputStreamWriter(yc.getOutputStream());
-		wr.write("bline=" + lineId + "&goes=" + directionLetters[direction - 1]
-				+ "&lineStops=" + stopId);
+		wr.write(String.format(STOP_NAME_POST_PARAMS, lineId,
+				directionLetters[direction]));
 		wr.flush();
 
 		BufferedReader in = new BufferedReader(new InputStreamReader(
