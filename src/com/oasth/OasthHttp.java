@@ -9,10 +9,19 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 
+// Git problems
+// http://stackoverflow.com/questions/3601805/auth-problem-with-egit-and-github
+// http://stackoverflow.com/questions/8820668/the-current-branch-is-not-configured-for-pull-no-value-for-key-branch-master-mer
+
 public class OasthHttp {
 	private final static String TAG = "OasthHttp";
 	private final static char[] directionLetters = { 'a', 'b' };
 	private final static StringBuilder sbu = new StringBuilder();
+
+	
+	//curl "http://oasth.gr/tools/lineStop.php" -A "Mozilla/5.0 (X11; Linux i686; rv:2.0b12) Gecko/20110222 Firefox/4.0b12" -H "Referer: http://oasth.gr/tools/busTimes.php" -d "bline=434&goes=a&lineStops=" 
+	//curl "http://oasth.gr/tools/lineStop_eng.php" -A "Mozilla/5.0 (X11; Linux i686; rv:2.0b12) Gecko/20110222 Firefox/4.0b12" -H "Referer: http://oasth.gr/tools/busTimes_eng.php" -d "bline=434&goes=b&lineStops=" 
+
 
 	public static String getLineArrival(int lineId, int direction, int stopId)
 			throws IOException {
@@ -23,7 +32,7 @@ public class OasthHttp {
 		URL oracle = new URL("http://oasth.gr/tools/busTimes_eng.php");
 		URLConnection yc = oracle.openConnection();
 
-		populateDesktopHttpHeaders(yc);
+		populateDesktopHttpHeaders(yc, false);
 
 		yc.setDoOutput(true);
 
@@ -44,7 +53,7 @@ public class OasthHttp {
 		in.close();
 
 		long endTime0 = System.currentTimeMillis();
-		//Log.d(TAG, "Spent to donwload" + +(endTime0 - startTime0));
+		// Log.d(TAG, "Spent to donwload" + +(endTime0 - startTime0));
 
 		return sbu.toString();
 	}
@@ -58,7 +67,7 @@ public class OasthHttp {
 		URL oracle = new URL("http://oasth.gr/tools/lineTimes.php");
 		HttpURLConnection yc = (HttpURLConnection) oracle.openConnection();
 
-		populateDesktopHttpHeaders(yc);
+		populateDesktopHttpHeaders(yc, false);
 
 		yc.setDoOutput(true);
 
@@ -96,7 +105,7 @@ public class OasthHttp {
 				+ stopId + "&line=" + lineId + "&dir=" + direction);
 		HttpURLConnection yc = (HttpURLConnection) oracle.openConnection();
 
-		populateMobileHttpHeaders(yc);
+		populateMobileHttpHeaders(yc, true);
 
 		BufferedReader in = new BufferedReader(new InputStreamReader(
 				yc.getInputStream()));
@@ -117,7 +126,7 @@ public class OasthHttp {
 				+ stopId + "&dir=" + direction);
 		HttpURLConnection yc = (HttpURLConnection) oracle.openConnection();
 
-		populateMobileHttpHeaders(yc);
+		populateMobileHttpHeaders(yc, true);
 
 		BufferedReader in = new BufferedReader(new InputStreamReader(
 				yc.getInputStream()));
@@ -138,7 +147,7 @@ public class OasthHttp {
 				+ lineId + "&dir=" + direction);
 		HttpURLConnection yc = (HttpURLConnection) oracle.openConnection();
 
-		populateMobileHttpHeaders(yc);
+		populateMobileHttpHeaders(yc, true);
 		yc.setRequestProperty(
 				"User-Agent",
 				"Mozilla/5.0 (Linux; U; Android 1.6; en-us; SonyEricssonU20a Build/R1X) AppleWebKit/528.5+ (KHTML, like Gecko) Version/3.1.2 Mobile Safari/525.20.1");
@@ -163,7 +172,7 @@ public class OasthHttp {
 						+ "&dir=" + direction);
 		HttpURLConnection yc = (HttpURLConnection) oracle.openConnection();
 
-		populateMobileHttpHeaders(yc);
+		populateMobileHttpHeaders(yc, true);
 
 		BufferedReader in = new BufferedReader(new InputStreamReader(
 				yc.getInputStream()));
@@ -176,7 +185,8 @@ public class OasthHttp {
 		return sbu.toString();
 	}
 
-	private static void populateDesktopHttpHeaders(URLConnection urlCon) {
+	private static void populateDesktopHttpHeaders(URLConnection urlCon,
+			boolean isAjax) {
 		urlCon.setRequestProperty("User-Agent",
 				"Mozilla/5.0 (X11; Linux i686; rv:2.0b12) Gecko/20110222 Firefox/4.0b12");
 		urlCon.setRequestProperty("Referer",
@@ -185,18 +195,26 @@ public class OasthHttp {
 				"el-gr,el;q=0.8,en-us;q=0.5,en;q=0.3");
 		urlCon.setRequestProperty("Accept-Charset",
 				"ISO-8859-7,utf-8;q=0.7,*;q=0.7");
+
+		if (isAjax) {
+			urlCon.setRequestProperty("X-Requested-With", "XMLHttpRequest");
+		}
 	}
 
-	private static void populateMobileHttpHeaders(URLConnection urlCon) {
+	private static void populateMobileHttpHeaders(URLConnection urlCon,
+			boolean isAjax) {
 		urlCon.setRequestProperty(
 				"User-Agent",
 				"Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X; en-us) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Mobile/7A341 Safari/528.16");
-		urlCon.setRequestProperty("X-Requested-With", "XMLHttpRequest");
 		urlCon.setRequestProperty("Referer", "http://nm.oasth.gr/");
 		urlCon.setRequestProperty("Accept-Language",
 				"el-gr,el;q=0.8,en-us;q=0.5,en;q=0.3");
 		urlCon.setRequestProperty("Accept-Charset",
 				"ISO-8859-7,utf-8;q=0.7,*;q=0.7");
+
+		if (isAjax) {
+			urlCon.setRequestProperty("X-Requested-With", "XMLHttpRequest");
+		}
 	}
 
 	private static void cleanSbu() {
