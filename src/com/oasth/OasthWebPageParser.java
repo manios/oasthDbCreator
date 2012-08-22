@@ -9,7 +9,7 @@ public class OasthWebPageParser {
 	private final static String PATTERN_STOP_NAME_DESKTOP = "<option value=\"([0-9]+)\">([^<]*)</option>";
 	private final static String PATTERN_LINE_NAME_DESKTOP = "<option value=\"([0-9]+)\">([^: ]*) *: *([^<]*)</option>";
 	public final static String REPLACEMENT_STOP_NAME = "$1,$2";
-	public final static String REPLACEMENT_LINE_NAME = REPLACEMENT_STOP_NAME;
+	public final static String REPLACEMENT_LINE_NAME = "$1,$2,$3";
 	public final static String REPLACEMENT_LINE_STOP_POSITION = REPLACEMENT_STOP_NAME;
 	private final static String e = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
@@ -43,6 +43,70 @@ public class OasthWebPageParser {
 			bla.append(matcher.group().replaceAll(pattern, replacement))
 					.append("\n");
 		}
+		return bla.toString();
+	}
+
+	public static String parseLineNames(String response) {
+		StringBuilder bla = new StringBuilder();
+
+		// In case you would like to ignore case sensitivity you could use this
+		// statement
+		// Pattern pattern = Pattern.compile("\\s+", Pattern.CASE_INSENSITIVE);
+		Matcher matcher = Pattern.compile(PATTERN_LINE_NAME_DESKTOP).matcher(
+				response);
+
+		// Check all occurance
+		while (matcher.find()) {
+
+			bla.append(
+					matcher.group().replaceAll(PATTERN_LINE_NAME_DESKTOP,
+							REPLACEMENT_LINE_NAME)).append("\n");
+		}
+
+		int firstNline = bla.indexOf("\n");
+		bla.replace(0, firstNline + 1, "");
+
+		return bla.toString();
+	}
+
+	public static ArrayList<BusLine> parseLineNamesToArrayList(String response) {
+		ArrayList<BusLine> bli = new ArrayList<BusLine>();
+
+		// In case you would like to ignore case sensitivity you could use this
+		// statement
+		// Pattern pattern = Pattern.compile("\\s+", Pattern.CASE_INSENSITIVE);
+		Matcher matcher = Pattern.compile(PATTERN_LINE_NAME_DESKTOP).matcher(
+				response);
+
+		// Check all occurance
+		while (matcher.find()) {
+			bli.add(new BusLine(matcher.group().replaceAll(
+					PATTERN_LINE_NAME_DESKTOP, REPLACEMENT_LINE_NAME)));
+		}
+		bli.remove(0);
+		return bli;
+	}
+
+	public static String parseStopNames(String response, int lineId,
+			int direction, int language) {
+		StringBuilder bla = new StringBuilder();
+		final String linePrefix = lineId + "," + direction + "," + language
+				+ ",";
+
+		// In case you would like to ignore case sensitivity you could use this
+		// statement
+		// Pattern pattern = Pattern.compile("\\s+", Pattern.CASE_INSENSITIVE);
+		Matcher matcher = Pattern.compile(PATTERN_STOP_NAME_DESKTOP).matcher(
+				response);
+
+		// Check all occurance
+		while (matcher.find()) {
+			bla.append(linePrefix)
+					.append(matcher.group().replaceAll(
+							PATTERN_STOP_NAME_DESKTOP, REPLACEMENT_STOP_NAME))
+					.append("\n");
+		}
+
 		return bla.toString();
 	}
 

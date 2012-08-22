@@ -29,13 +29,13 @@ public class OasthHttp {
 
 	private final static String STOP_NAME_POST_PARAMS = "bline=%d&goes=%c&lineStops=";
 
-	public static String getLineNamesGreek(int lineId, int direction)
+	public static String getLineNamesGreek()
 			throws IOException {
 		return getLineOrStopNames(STOP_NAME_URL_GR, 67, 1,
 				BYTES_TO_SKIP_LINE_NAMES);
 	}
 
-	public static String getLineNamesEnglish(int lineId, int direction)
+	public static String getLineNamesEnglish()
 			throws IOException {
 		return getLineOrStopNames(STOP_NAME_URL_EN, 67, 1,
 				BYTES_TO_SKIP_LINE_NAMES);
