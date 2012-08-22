@@ -9,7 +9,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 
-// Git problems
+// Git problems with Egit
 // http://stackoverflow.com/questions/3601805/auth-problem-with-egit-and-github
 // http://stackoverflow.com/questions/8820668/the-current-branch-is-not-configured-for-pull-no-value-for-key-branch-master-mer
 
@@ -22,18 +22,58 @@ public class OasthHttp {
 	private final static String LINE_NAME_URL_EN = "http://oasth.gr/tools/busTimes_eng.php";
 	private final static String STOP_NAME_URL_GR = "http://oasth.gr/tools/lineStop.php";
 	private final static String STOP_NAME_URL_EN = "http://oasth.gr/tools/lineStop_eng.php";
+	private final static String LINE_AND_STOP_POSITIONS_URL_GR = "http://nm.oasth.gr/index.php?md=6&sn=3&line=%d&dir=%c";
+
+	private final static long BYTES_TO_SKIP_LINE_NAMES = 0;
+	private final static long BYTES_TO_SKIP_STOP_NAMES = 15037;
+
 	private final static String STOP_NAME_POST_PARAMS = "bline=%d&goes=%c&lineStops=";
 
-	public static String getLineArrival(String urlString,int lineId, int direction)
+	public static String getLineNamesGreek(int lineId, int direction)
 			throws IOException {
-		long startTime0 = System.currentTimeMillis();
+		return getLineOrStopNames(STOP_NAME_URL_GR, 67, 1,
+				BYTES_TO_SKIP_LINE_NAMES);
+	}
 
+	public static String getLineNamesEnglish(int lineId, int direction)
+			throws IOException {
+		return getLineOrStopNames(STOP_NAME_URL_EN, 67, 1,
+				BYTES_TO_SKIP_LINE_NAMES);
+	}
+
+	public static String getStopNamesGreek(int lineId, int direction)
+			throws IOException {
+		return getLineOrStopNames(STOP_NAME_URL_GR, lineId, direction,
+				BYTES_TO_SKIP_STOP_NAMES);
+	}
+
+	public static String getStopNamesEnglish(int lineId, int direction)
+			throws IOException {
+		return getLineOrStopNames(STOP_NAME_URL_EN, lineId, direction,
+				BYTES_TO_SKIP_STOP_NAMES);
+	}
+
+	public static String getLineStopPositions(int lineId, int direction)
+			throws IOException {
+		return getLineAndStopPositions(LINE_AND_STOP_POSITIONS_URL_GR, lineId,
+				direction);
+	}
+
+	private static String getLineOrStopNames(String urlString, int lineId,
+			int direction, long bytesToSkip) throws IOException {
 		cleanSbu();
 
-		URL oracle = new URL(urlString);
-		URLConnection yc = oracle.openConnection();
+		// long startTime0 = System.currentTimeMillis();
 
-		populateDesktopHttpHeaders(yc, false);
+		URL oracle = new URL(urlString);
+		HttpURLConnection yc = (HttpURLConnection) oracle.openConnection();
+
+		if (urlString.equals(STOP_NAME_URL_EN)
+				|| urlString.equals(LINE_NAME_URL_EN)) {
+			populateDesktopHttpHeaders(yc, LINE_NAME_URL_EN, false);
+		} else {
+			populateDesktopHttpHeaders(yc, LINE_NAME_URL_GR, false);
+		}
 
 		yc.setDoOutput(true);
 
@@ -46,45 +86,7 @@ public class OasthHttp {
 				yc.getInputStream()));
 		String inputLine;
 
-		in.skip(31000);
-		while ((inputLine = in.readLine()) != null)
-			sbu.append(inputLine);
-
-		wr.close();
-		in.close();
-
-		long endTime0 = System.currentTimeMillis();
-		// Log.d(TAG, "Spent to donwload" + +(endTime0 - startTime0));
-
-		return sbu.toString();
-	}
-
-	public static String getLinesArrival(int lineId, int direction, int stopId)
-			throws IOException {
-		cleanSbu();
-
-		// long startTime0 = System.currentTimeMillis();
-
-		URL oracle = new URL("http://oasth.gr/tools/lineTimes.php");
-		HttpURLConnection yc = (HttpURLConnection) oracle.openConnection();
-
-		populateDesktopHttpHeaders(yc, false);
-
-		yc.setDoOutput(true);
-
-		OutputStreamWriter wr = new OutputStreamWriter(yc.getOutputStream());
-
-		String parames = "bline=" + lineId + "&goes="
-				+ directionLetters[direction - 1] + "&lineStops=" + stopId;
-
-		wr.write(parames);
-		wr.flush();
-
-		BufferedReader in = new BufferedReader(new InputStreamReader(
-				yc.getInputStream()));
-		String inputLine;
-
-		in.skip(31000);
+		in.skip(bytesToSkip);
 		while ((inputLine = in.readLine()) != null)
 			sbu.append(inputLine);
 
@@ -98,15 +100,20 @@ public class OasthHttp {
 
 	}
 
-	public static String getMobileLineArrival(int lineId, int direction,
-			int stopId) throws IOException {
+	private static String getLineAndStopPositions(String urlString, int lineId,
+			int direction) throws IOException {
 		cleanSbu();
 
-		URL oracle = new URL("http://nm.oasth.gr/index.php?md=3&sn=3&start="
-				+ stopId + "&line=" + lineId + "&dir=" + direction);
+		// long startTime0 = System.currentTimeMillis();
+
+		URL oracle = new URL(String.format(urlString, lineId, direction));
 		HttpURLConnection yc = (HttpURLConnection) oracle.openConnection();
 
-		populateMobileHttpHeaders(yc, true);
+		if (urlString.equals(STOP_NAME_URL_EN)) {
+			populateMobileHttpHeaders(yc, LINE_NAME_URL_EN, false);
+		} else {
+			populateMobileHttpHeaders(yc, LINE_NAME_URL_GR, false);
+		}
 
 		BufferedReader in = new BufferedReader(new InputStreamReader(
 				yc.getInputStream()));
@@ -116,82 +123,17 @@ public class OasthHttp {
 			sbu.append(inputLine);
 		in.close();
 
-		return sbu.toString();
-	}
-
-	public static String getMobileLinesArrival(int lineId, int direction,
-			int stopId) throws IOException {
-		cleanSbu();
-
-		URL oracle = new URL("http://nm.oasth.gr/index.php?md=4&sn=4&stp="
-				+ stopId + "&dir=" + direction);
-		HttpURLConnection yc = (HttpURLConnection) oracle.openConnection();
-
-		populateMobileHttpHeaders(yc, true);
-
-		BufferedReader in = new BufferedReader(new InputStreamReader(
-				yc.getInputStream()));
-		String inputLine;
-
-		while ((inputLine = in.readLine()) != null)
-			sbu.append(inputLine);
-		in.close();
-
-		return sbu.toString();
-	}
-
-	public static String getMobileTextualPosition(int lineId, int direction)
-			throws IOException {
-		cleanSbu();
-
-		URL oracle = new URL("http://nm.oasth.gr/index.php?md=6&sn=3&line="
-				+ lineId + "&dir=" + direction);
-		HttpURLConnection yc = (HttpURLConnection) oracle.openConnection();
-
-		populateMobileHttpHeaders(yc, true);
-		yc.setRequestProperty(
-				"User-Agent",
-				"Mozilla/5.0 (Linux; U; Android 1.6; en-us; SonyEricssonU20a Build/R1X) AppleWebKit/528.5+ (KHTML, like Gecko) Version/3.1.2 Mobile Safari/525.20.1");
-
-		BufferedReader in = new BufferedReader(new InputStreamReader(
-				yc.getInputStream()));
-		String inputLine;
-
-		while ((inputLine = in.readLine()) != null)
-			sbu.append(inputLine);
-		in.close();
-
-		return sbu.toString();
-	}
-
-	public static String getMobilePosition(int lineId, int direction)
-			throws IOException {
-		cleanSbu();
-
-		URL oracle = new URL(
-				"http://nm.oasth.gr/index.php?md=6&sn=4&ref=1&line=" + lineId
-						+ "&dir=" + direction);
-		HttpURLConnection yc = (HttpURLConnection) oracle.openConnection();
-
-		populateMobileHttpHeaders(yc, true);
-
-		BufferedReader in = new BufferedReader(new InputStreamReader(
-				yc.getInputStream()));
-		String inputLine;
-
-		while ((inputLine = in.readLine()) != null)
-			sbu.append(inputLine);
-		in.close();
+		// long endTime0 = System.currentTimeMillis();
+		// Log.d(TAG, "Spent to donwload" + +(endTime0 - startTime0));
 
 		return sbu.toString();
 	}
 
 	private static void populateDesktopHttpHeaders(URLConnection urlCon,
-			boolean isAjax) {
+			final String referer, boolean isAjax) {
 		urlCon.setRequestProperty("User-Agent",
 				"Mozilla/5.0 (X11; Linux i686; rv:2.0b12) Gecko/20110222 Firefox/4.0b12");
-		urlCon.setRequestProperty("Referer",
-				"http://oasth.gr/tools/lineTimes.php");
+		urlCon.setRequestProperty("Referer", referer);
 		urlCon.setRequestProperty("Accept-Language",
 				"el-gr,el;q=0.8,en-us;q=0.5,en;q=0.3");
 		urlCon.setRequestProperty("Accept-Charset",
@@ -203,11 +145,11 @@ public class OasthHttp {
 	}
 
 	private static void populateMobileHttpHeaders(URLConnection urlCon,
-			boolean isAjax) {
+			final String referer, boolean isAjax) {
 		urlCon.setRequestProperty(
 				"User-Agent",
 				"Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X; en-us) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Mobile/7A341 Safari/528.16");
-		urlCon.setRequestProperty("Referer", "http://nm.oasth.gr/");
+		urlCon.setRequestProperty("Referer", referer);
 		urlCon.setRequestProperty("Accept-Language",
 				"el-gr,el;q=0.8,en-us;q=0.5,en;q=0.3");
 		urlCon.setRequestProperty("Accept-Charset",
