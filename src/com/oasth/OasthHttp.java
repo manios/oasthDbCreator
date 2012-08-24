@@ -79,7 +79,7 @@ public class OasthHttp {
 
 		OutputStreamWriter wr = new OutputStreamWriter(yc.getOutputStream());
 		wr.write(String.format(STOP_NAME_POST_PARAMS, lineId,
-				directionLetters[direction]));
+				directionLetters[direction-1]));
 		wr.flush();
 
 		BufferedReader in = new BufferedReader(new InputStreamReader(
