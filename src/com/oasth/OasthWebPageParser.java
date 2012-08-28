@@ -5,12 +5,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class OasthWebPageParser {
-	private final static String PATTERN_LINE_STOP_POSITION_MOBILE = "<div class=\"ttl\"><div style=\"display:none;\">([^<]*)</div><div style=\"display:none;\">([^<]*)</div><div style=\"display:none;\">[^<]*</div>";
+	private final static String PATTERN_LINE_STOP_POSITION_BEF_DECODING = "<div class=\"ttl\"><div style=\"display:none;\">([^<]*)</div><div style=\"display:none;\">([^<]*)</div><div style=\"display:none;\">[^<]*</div>";
+	private final static String PATTERN_LINE_POSITION = "<div class=\"ttl\"><div style=\"display:none;\">([^<]*)</div><div style=\"display:none;\">([^<]*)</div><div style=\"display:none;\">[^<]*</div>";
+	private final static String PATTERN_STOP_POSITION = "<div class=\"ttl\"><div style=\"display:none;\">([^<]*)</div><div style=\"display:none;\">([^<]*)</div><div style=\"display:none;\">[^<]*</div>";
+
 	private final static String PATTERN_STOP_NAME_DESKTOP = "<option value=\"([0-9]+)\">([^<]*)</option>";
 	private final static String PATTERN_LINE_NAME_DESKTOP = "<option value=\"([0-9]+)\">([^: ]*) *: *([^<]*)</option>";
 	public final static String REPLACEMENT_STOP_NAME = "$1,$2";
 	public final static String REPLACEMENT_LINE_NAME = "$1,$2,$3";
-	public final static String REPLACEMENT_LINE_STOP_POSITION = REPLACEMENT_STOP_NAME;
+	public final static String REPLACEMENT_LINE_POSITION = "$1";
+	public final static String REPLACEMENT_STOP_POSITION = "$2";
 	private final static String e = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
 	public static ArrayList<String> parse(String response, String pattern,
@@ -88,8 +92,10 @@ public class OasthWebPageParser {
 	}
 
 	public static String parseStopNames(String response, int lineId,
-			int direction, int language) {
+			int direction, String language) {
 		StringBuilder bla = new StringBuilder();
+		int sorder = 1;
+
 		final String linePrefix = lineId + "," + direction + "," + language
 				+ ",";
 
@@ -101,13 +107,55 @@ public class OasthWebPageParser {
 
 		// Check all occurance
 		while (matcher.find()) {
-			bla.append(linePrefix)
+			bla.append(sorder++)
+					.append(',')
+					.append(linePrefix)
 					.append(matcher.group().replaceAll(
 							PATTERN_STOP_NAME_DESKTOP, REPLACEMENT_STOP_NAME))
 					.append("\n");
 		}
 
 		return bla.toString();
+	}
+
+	public static ArrayList<String> parseLinePositionsToArrayList(
+			String response) {
+		ArrayList<String> bli = new ArrayList<String>();
+
+		// In case you would like to ignore case sensitivity you could use this
+		// statement
+		// Pattern pattern = Pattern.compile("\\s+", Pattern.CASE_INSENSITIVE);
+		Matcher matcher = Pattern.compile(
+				PATTERN_LINE_STOP_POSITION_BEF_DECODING).matcher(response);
+
+		// Check all occurance
+		while (matcher.find()) {
+			bli.add(aniMarker(matcher.group().replaceAll(
+					PATTERN_LINE_STOP_POSITION_BEF_DECODING,
+					REPLACEMENT_LINE_POSITION)));
+		}
+
+		return bli;
+	}
+
+	public static ArrayList<String> parseStopPositionsToArrayList(
+			String response) {
+		ArrayList<String> bli = new ArrayList<String>();
+
+		// In case you would like to ignore case sensitivity you could use this
+		// statement
+		// Pattern pattern = Pattern.compile("\\s+", Pattern.CASE_INSENSITIVE);
+		Matcher matcher = Pattern.compile(
+				PATTERN_LINE_STOP_POSITION_BEF_DECODING).matcher(response);
+
+		// Check all occurance
+		while (matcher.find()) {
+			bli.add(aniMarker(matcher.group().replaceAll(
+					PATTERN_LINE_STOP_POSITION_BEF_DECODING,
+					REPLACEMENT_STOP_POSITION)));
+		}
+
+		return bli;
 	}
 
 	public static String aniMarker(String a) {
