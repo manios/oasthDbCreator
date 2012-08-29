@@ -6,8 +6,8 @@ import java.util.regex.Pattern;
 
 public class OasthWebPageParser {
 	private final static String PATTERN_LINE_STOP_POSITION_BEF_DECODING = "<div class=\"ttl\"><div style=\"display:none;\">([^<]*)</div><div style=\"display:none;\">([^<]*)</div><div style=\"display:none;\">[^<]*</div>";
-	private final static String PATTERN_LINE_POSITION = "<div class=\"ttl\"><div style=\"display:none;\">([^<]*)</div><div style=\"display:none;\">([^<]*)</div><div style=\"display:none;\">[^<]*</div>";
-	private final static String PATTERN_STOP_POSITION = "<div class=\"ttl\"><div style=\"display:none;\">([^<]*)</div><div style=\"display:none;\">([^<]*)</div><div style=\"display:none;\">[^<]*</div>";
+	private final static String PATTERN_LINE_POSITION = "<span ornt=\"([^,]*),([^,]*)\" lbl=\"([^\"]*)\" >";
+	private final static String PATTERN_STOP_POSITION = "<span ornt=\"([^,]*),([^,]*)\" lbl=\"([^\"]*)\" >";
 
 	private final static String PATTERN_STOP_NAME_DESKTOP = "<option value=\"([0-9]+)\">([^<]*)</option>";
 	private final static String PATTERN_LINE_NAME_DESKTOP = "<option value=\"([0-9]+)\">([^: ]*) *: *([^<]*)</option>";
@@ -169,7 +169,7 @@ public class OasthWebPageParser {
 
 	private static String decodeCoordinates(String a) {
 
-		String b = "";
+		StringBuilder b = new StringBuilder("");
 		char c, chr2, chr3;
 		int d, enc2, enc3, enc4;
 		int i = 0;
@@ -182,20 +182,20 @@ public class OasthWebPageParser {
 			c = (char) ((d << 2) | (enc2 >> 4));
 			chr2 = (char) (((enc2 & 15) << 4) | (enc3 >> 2));
 			chr3 = (char) (((enc3 & 3) << 6) | enc4);
-			b = b + c;
+			b .append(c);
 			if (enc3 != 64) {
-				b = b + chr2;
+				b .append(chr2);
 			}
 			if (enc4 != 64) {
-				b = b + chr3;
+				b .append(chr3);
 			}
 		}
 		b = g(b);
-		return b;
+		return b.toString();
 	}
 
-	private static String g(String a) {
-		String b = "";
+	private static StringBuilder g(StringBuilder a) {
+		StringBuilder b = new StringBuilder("");
 		int i = 0;
 		char c;
 		char c2;
@@ -204,16 +204,16 @@ public class OasthWebPageParser {
 		while (i < a.length()) {
 			c = a.charAt(i);
 			if (c < 128) {
-				b += c;
+				b .append( c);
 				i++;
 			} else if ((c > 191) && (c < 224)) {
 				c2 = a.charAt(i + 1);
-				b += (char) (((c & 31) << 6) | (c2 & 63));
+				b .append( (char) (((c & 31) << 6) | (c2 & 63)));
 				i += 2;
 			} else {
 				c2 = a.charAt(i + 1);
 				c3 = a.charAt(i + 2);
-				b += (char) (((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
+				b .append((char) (((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63)));
 				i += 3;
 			}
 		}
