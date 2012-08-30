@@ -42,8 +42,9 @@ public class TestDbDownload {
 
 		response = OasthHttp.getLineNamesGreek();
 
-		writeStringToFile(OasthWebPageParser.parseLineNames(response),
-				new File(downloadDirectory, "greekLineNames.csv"));
+		FileUtils.writeStringToFile(
+				OasthWebPageParser.parseLineNames(response), new File(
+						downloadDirectory, "greekLineNames.csv"));
 
 		lineList = OasthWebPageParser.parseLineNamesToArrayList(response);
 
@@ -53,8 +54,9 @@ public class TestDbDownload {
 
 		response = OasthHttp.getLineNamesEnglish();
 
-		writeStringToFile(OasthWebPageParser.parseLineNames(response),
-				new File(downloadDirectory, "englishLineNames.csv"));
+		FileUtils.writeStringToFile(
+				OasthWebPageParser.parseLineNames(response), new File(
+						downloadDirectory, "englishLineNames.csv"));
 
 		log("written English line names to file..");
 
@@ -95,7 +97,6 @@ public class TestDbDownload {
 		File outFile = new File(parsedDirectory, String.format(outputFileName,
 				language));
 
-		
 		for (BusLine i : bl) {
 			curcount++;
 
@@ -113,12 +114,12 @@ public class TestDbDownload {
 				log(String.format("file %s not found!", inFile.getName()));
 			}
 
-			response = readFile(inFile);
+			response = FileUtils.readTextFile(inFile);
 
 			response = OasthWebPageParser.parseStopNames(response, i.getId(),
 					direction, language);
 
-			appendStringToFile(response, outFile);
+			FileUtils.appendStringToFile(response, outFile);
 
 		}
 
@@ -139,7 +140,8 @@ public class TestDbDownload {
 		log("Writing Stop names for: " + bl.getNumber() + " " + bl.getName()
 				+ " direction:" + direction);
 
-		writeStringToFile(response, new File(downloadDirectory, fileName));
+		FileUtils.writeStringToFile(response, new File(downloadDirectory,
+				fileName));
 	}
 
 	public static void downloadStopNameEn(BusLine bl, int direction)
@@ -154,7 +156,8 @@ public class TestDbDownload {
 		log("Writing en Stop names for: " + bl.getNumber() + " " + bl.getName()
 				+ " direction:" + direction);
 
-		writeStringToFile(response, new File(downloadDirectory, fileName));
+		FileUtils.writeStringToFile(response, new File(downloadDirectory,
+				fileName));
 	}
 
 	public static void downloadLineAndStopPositions(BusLine bl, int direction)
@@ -172,40 +175,8 @@ public class TestDbDownload {
 				"Writing line/stop positions for: %s %s direction %d to %s",
 				bl.getNumber(), bl.getName(), direction, fileName));
 
-		writeStringToFile(response, new File(downloadPosDirectory, fileName));
-	}
-
-	public static String readFile(File f) throws IOException {
-		StringBuilder inpLine = new StringBuilder();
-
-		BufferedReader bf = new BufferedReader(new FileReader(f));
-		String curLine;
-
-		while ((curLine = bf.readLine()) != null) {
-			inpLine.append(curLine);
-		}
-		bf.close();
-		return inpLine.toString();
-	}
-
-	public static void writeStringToFile(String stout, File f)
-			throws IOException {
-		writeStringToFile(stout, f, false);
-
-	}
-
-	public static void appendStringToFile(String stout, File f)
-			throws IOException {
-		writeStringToFile(stout, f, true);
-	}
-
-	public static void writeStringToFile(String stout, File f, boolean isAppend)
-			throws IOException {
-		Writer out = new OutputStreamWriter(new FileOutputStream(f, isAppend),
-				"UTF8");
-		out.write(stout);
-		out.close();
-
+		FileUtils.writeStringToFile(response, new File(downloadPosDirectory,
+				fileName));
 	}
 
 	public static String getDuration(long startTime, long endTime) {
