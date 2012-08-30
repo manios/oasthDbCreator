@@ -29,14 +29,12 @@ public class OasthHttp {
 
 	private final static String STOP_NAME_POST_PARAMS = "bline=%d&goes=%c&lineStops=";
 
-	public static String getLineNamesGreek()
-			throws IOException {
+	public static String getLineNamesGreek() throws IOException {
 		return getLineOrStopNames(STOP_NAME_URL_GR, 67, 1,
 				BYTES_TO_SKIP_LINE_NAMES);
 	}
 
-	public static String getLineNamesEnglish()
-			throws IOException {
+	public static String getLineNamesEnglish() throws IOException {
 		return getLineOrStopNames(STOP_NAME_URL_EN, 67, 1,
 				BYTES_TO_SKIP_LINE_NAMES);
 	}
@@ -79,11 +77,11 @@ public class OasthHttp {
 
 		OutputStreamWriter wr = new OutputStreamWriter(yc.getOutputStream());
 		wr.write(String.format(STOP_NAME_POST_PARAMS, lineId,
-				directionLetters[direction-1]));
+				directionLetters[direction - 1]));
 		wr.flush();
 
 		BufferedReader in = new BufferedReader(new InputStreamReader(
-				yc.getInputStream()));
+				yc.getInputStream(), "UTF8"));
 		String inputLine;
 
 		in.skip(bytesToSkip);
@@ -116,7 +114,7 @@ public class OasthHttp {
 		}
 
 		BufferedReader in = new BufferedReader(new InputStreamReader(
-				yc.getInputStream()));
+				yc.getInputStream(), "UTF8"));
 		String inputLine;
 
 		while ((inputLine = in.readLine()) != null)
