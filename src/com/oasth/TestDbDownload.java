@@ -3,19 +3,25 @@ package com.oasth;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
+
+import org.omg.CORBA.Environment;
 
 public class TestDbDownload {
 	/** directory in which we store parsed csv data */
 	private final static File parsedDirectory = new File("downloadOasth");
 	/** directory in which we store downloaded raw html data */
 	private final static File downloadDirectory = new File("downloadOasth");
-	private final static File parsedPosDirectory = new File("parsedOasth/lspos");
-	private final static File downloadPosDirectory = new File(
-			"downloadOasth/lspos");
+	private final static File parsedPosDirectory = new File("parsedOasth"
+			+ File.separatorChar + "lspos");
+	private final static File downloadPosDirectory = new File("downloadOasth"
+			+ File.separatorChar + "lspos");
 
 	/**
 	 * @param args
@@ -52,6 +58,10 @@ public class TestDbDownload {
 
 		log("written English line names to file..");
 
+		parseStopNames(lineList, 1, "gr");
+		parseStopNames(lineList, 2, "gr");
+		parseStopNames(lineList, 1, "en");
+		parseStopNames(lineList, 2, "en");
 		// log("Downloading stop Stop names ..");
 		//
 		// for (BusLine i : lineList) {
@@ -74,76 +84,41 @@ public class TestDbDownload {
 		System.out.println(message);
 	}
 
-	public static void parseStopNamesGreek(ArrayList<BusLine> bl, int direction)
-			throws IOException {
+	public static void parseStopNames(ArrayList<BusLine> bl, int direction,
+			String language) throws IOException {
 		final String inputFileName = "stops_%d_%d_%s.txt";
-		final String outputFileName = "stopNames%s.csv";
-		final String log_parsing = "%d/%d parsing Greek stop names for: %s : $s , direction : %d";
-		final String log_writing = "      writting Greek stop names for: %s : $s , direction : %d";
+		final String outputFileName = "stopNames_%s.csv";
 		int curcount = 0;
+		int totalcount = bl.size();
 		String response;
 		File inFile;
+		File outFile = new File(parsedDirectory, String.format(outputFileName,
+				language));
 
+		
 		for (BusLine i : bl) {
 			curcount++;
 
-			log(String.format(log_parsing, curcount, bl.size(), i.getNumber(),
-					i.getName(), direction));
+			final String log_parsing = curcount + " from " + totalcount
+					+ "  parsing " + language + " stop names for: "
+					+ i.getNumber() + "  : " + i.getName() + "  , direction : "
+					+ direction;
+
+			log(log_parsing);
 
 			inFile = new File(downloadDirectory, String.format(inputFileName,
-					i.getId(), direction, "gr"));
+					i.getId(), direction, language));
 
 			if (!inFile.exists()) {
-				log(String.format("file %s not found!", inFile));
-			}
-
-			response = readFile(inFile);
-
-			OasthWebPageParser.parseStopNames(response, i.getId(), direction,
-					"gr");
-
-			log(String.format(log_writing, curcount, bl.size(), i.getNumber(),
-					i.getName(), direction));
-			// writeStringToFile(response, new File(downloadDirectory,
-			// fileName));
-
-		}
-
-	}
-
-	public static void parseStopNamesEn(ArrayList<BusLine> bl, int direction)
-			throws IOException {
-		final String inputFileName = "stops_%d_%d_%s.txt";
-		final String outputFileName = "stopNames.csv";
-		final String log_parsing = "%d/%d parsing Engilsh stop names for: %s : $s , direction : %d";
-		final String log_writing = "      writting English stop names for: %s : $s , direction : %d";
-		int curcount = 0;
-		String response;
-		File inFile;
-
-		for (BusLine i : bl) {
-			curcount++;
-
-			log(String.format(log_parsing, curcount, bl.size(), i.getNumber(),
-					i.getName(), direction));
-
-			inFile = new File(downloadDirectory, String.format(inputFileName,
-					i.getId(), direction, "en"));
-
-			if (!inFile.exists()) {
-				log(String.format("file %s not found!", inFile));
+				log(String.format("file %s not found!", inFile.getName()));
 			}
 
 			response = readFile(inFile);
 
 			response = OasthWebPageParser.parseStopNames(response, i.getId(),
-					direction, "en");
+					direction, language);
 
-			log(String.format(log_writing, curcount, bl.size(), i.getNumber(),
-					i.getName(), direction));
-
-			appendStringToFile(response, new File(downloadDirectory,
-					outputFileName));
+			appendStringToFile(response, outFile);
 
 		}
 
@@ -215,28 +190,21 @@ public class TestDbDownload {
 
 	public static void writeStringToFile(String stout, File f)
 			throws IOException {
-		BufferedWriter writer = new BufferedWriter(new FileWriter(f, false));
-		writer.write(stout);
-
-		writer.close();
+		writeStringToFile(stout, f, false);
 
 	}
 
 	public static void appendStringToFile(String stout, File f)
 			throws IOException {
-		BufferedWriter writer = new BufferedWriter(new FileWriter(f, true));
-		writer.write(stout);
-
-		writer.close();
-
+		writeStringToFile(stout, f, true);
 	}
 
 	public static void writeStringToFile(String stout, File f, boolean isAppend)
 			throws IOException {
-		BufferedWriter writer = new BufferedWriter(new FileWriter(f, isAppend));
-		writer.write(stout);
-
-		writer.close();
+		Writer out = new OutputStreamWriter(new FileOutputStream(f, isAppend),
+				"UTF8");
+		out.write(stout);
+		out.close();
 
 	}
 
