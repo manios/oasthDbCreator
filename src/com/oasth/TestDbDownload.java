@@ -60,10 +60,6 @@ public class TestDbDownload {
 
 		log("written English line names to file..");
 
-		parseStopNames(lineList, 1, "gr");
-		parseStopNames(lineList, 2, "gr");
-		parseStopNames(lineList, 1, "en");
-		parseStopNames(lineList, 2, "en");
 		// log("Downloading stop Stop names ..");
 		//
 		// for (BusLine i : lineList) {
@@ -80,10 +76,24 @@ public class TestDbDownload {
 		// }
 		// long endi = System.currentTimeMillis();
 		// log("Downloaded in: " + getDuration(starti, endi));
+
+		// parse all stop names
+		// parseStopNames(lineList);
+
+		parseLineAndStopPositions(lineList, 1);
+		parseLineAndStopPositions(lineList, 2);
+
 	}
 
 	public static void log(String message) {
 		System.out.println(message);
+	}
+
+	public static void parseStopNames(ArrayList<BusLine> bl) throws IOException {
+		parseStopNames(bl, 1, "gr");
+		parseStopNames(bl, 2, "gr");
+		parseStopNames(bl, 1, "en");
+		parseStopNames(bl, 2, "en");
 	}
 
 	public static void parseStopNames(ArrayList<BusLine> bl, int direction,
@@ -112,6 +122,7 @@ public class TestDbDownload {
 
 			if (!inFile.exists()) {
 				log(String.format("file %s not found!", inFile.getName()));
+				continue;
 			}
 
 			response = FileUtils.readTextFile(inFile);
@@ -125,7 +136,50 @@ public class TestDbDownload {
 
 	}
 
-	public static void parseLineAndStopPositions(ArrayList<BusLine> bl) {
+	public static void parseLineAndStopPositions(ArrayList<BusLine> bl,
+			int direction) throws IOException {
+		final String inputFileName = "linestoppos_%d_%d.txt";
+		final String outputStopFileName = "stopPositions.csv";
+		final String outputLineFileName = "linePositions.csv";
+
+		int curcount = 0;
+		int totalcount = bl.size();
+		String response;
+		String linePositions = null;
+		String stopPositions = null;
+
+		File inFile;
+		File lineOutFile = new File(parsedDirectory, outputLineFileName);
+		File stopOutFile = new File(parsedDirectory, outputStopFileName);
+
+		for (BusLine i : bl) {
+			curcount++;
+
+			final String log_parsing = curcount + " from " + totalcount
+					+ "  parsing stop positions for: " + i.getNumber() + "  : "
+					+ i.getName() + "  , direction : " + direction;
+
+			log(log_parsing);
+
+			inFile = new File(downloadPosDirectory, String.format(
+					inputFileName, i.getId(), direction));
+
+			if (!inFile.exists()) {
+				log(String.format("file %s not found!", inFile.getName()));
+				continue;
+			}
+
+			response = FileUtils.readTextFile(inFile);
+
+			linePositions = OasthWebPageParser.parseLinePositions(response,
+					i.getId(), direction);
+			stopPositions = OasthWebPageParser.parseStopPositions(response,
+					i.getId(), direction);
+
+			FileUtils.appendStringToFile(linePositions, lineOutFile);
+			FileUtils.appendStringToFile(stopPositions.toString(), stopOutFile);
+
+		}
 	}
 
 	public static void downloadStopNameGreek(BusLine bl, int direction)
