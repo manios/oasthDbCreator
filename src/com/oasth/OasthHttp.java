@@ -18,11 +18,19 @@ public class OasthHttp {
 	private final static char[] directionLetters = { 'a', 'b' };
 	private final static StringBuilder sbu = new StringBuilder();
 
+	private final static int LANGUAGE_GREEK = 1;
+	private final static int LANGUAGE_ENGLISH = 2;
+
 	private final static String LINE_NAME_URL_GR = "http://oasth.gr/tools/busTimes.php";
 	private final static String LINE_NAME_URL_EN = "http://oasth.gr/tools/busTimes_eng.php";
 	private final static String STOP_NAME_URL_GR = "http://oasth.gr/tools/lineStop.php";
 	private final static String STOP_NAME_URL_EN = "http://oasth.gr/tools/lineStop_eng.php";
+	private final static String STOP_NAME_AND_CODE_URL_GR = "http://oasth.gr/service/stasis.php?ml=%d&days=1";
+	private final static String STOP_NAME_AND_CODE_URL_EN = "http://oasth.gr/service/stasis_eng.php?ml=%d&days=1";
 	private final static String LINE_AND_STOP_POSITIONS_URL_GR = "http://nm.oasth.gr/index.php?md=6&sn=3&line=%d&dir=%c";
+
+	private final static String URL_LINE_LIST_EN = "http://oasth.gr/service/grames_eng.php";
+	private final static String URL_LINE_LIST_GR = "http://oasth.gr/service/grames.php";
 
 	private final static long BYTES_TO_SKIP_LINE_NAMES = 0;
 	private final static long BYTES_TO_SKIP_STOP_NAMES = 15037;
@@ -49,6 +57,46 @@ public class OasthHttp {
 			throws IOException {
 		return getLineOrStopNames(STOP_NAME_URL_EN, lineId, direction,
 				BYTES_TO_SKIP_STOP_NAMES);
+	}
+
+	public static String getStopNamesAndCodesGreek(int lineId)
+			throws IOException {
+		return getStopNamesAndCodes(STOP_NAME_AND_CODE_URL_GR, lineId,
+				LANGUAGE_GREEK);
+	}
+
+	public static String getStopNamesAndCodesEnglish(int lineId)
+			throws IOException {
+		return getStopNamesAndCodes(STOP_NAME_AND_CODE_URL_EN, lineId,
+				LANGUAGE_ENGLISH);
+	}
+
+	private static String getStopNamesAndCodes(String urlString, int lineId,
+			int language) throws IOException {
+		// long startTime0 = System.currentTimeMillis();
+
+		URL oracle = new URL(String.format(urlString, lineId));
+		HttpURLConnection yc = (HttpURLConnection) oracle.openConnection();
+
+		if (language == LANGUAGE_GREEK) {
+			populateDesktopHttpHeaders(yc, URL_LINE_LIST_GR, false);
+		} else {
+			populateDesktopHttpHeaders(yc, URL_LINE_LIST_EN, false);
+		}
+
+		BufferedReader in = new BufferedReader(new InputStreamReader(
+				yc.getInputStream(), "UTF8"), 8000);
+		String inputLine;
+
+		in.skip(19000);
+		while ((inputLine = in.readLine()) != null)
+			sbu.append(inputLine);
+		in.close();
+
+		// long endTime0 = System.currentTimeMillis();
+		// Log.d(TAG, "Spent to donwload" + +(endTime0 - startTime0));
+
+		return sbu.toString();
 	}
 
 	public static String getLineStopPositions(int lineId, int direction)
@@ -81,7 +129,7 @@ public class OasthHttp {
 		wr.flush();
 
 		BufferedReader in = new BufferedReader(new InputStreamReader(
-				yc.getInputStream(), "UTF8"));
+				yc.getInputStream(), "UTF8"), 8000);
 		String inputLine;
 
 		in.skip(bytesToSkip);
@@ -114,7 +162,7 @@ public class OasthHttp {
 		}
 
 		BufferedReader in = new BufferedReader(new InputStreamReader(
-				yc.getInputStream(), "UTF8"));
+				yc.getInputStream(), "UTF8"), 8000);
 		String inputLine;
 
 		while ((inputLine = in.readLine()) != null)
