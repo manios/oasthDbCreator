@@ -11,6 +11,10 @@ public class OasthWebPageParser {
 
 	private final static String PATTERN_STOP_NAME_DESKTOP = "<option value=\"([0-9]+)\">([^<]*)</option>";
 	private final static String PATTERN_LINE_NAME_DESKTOP = "<option value=\"([0-9]+)\">([^: ]*) *: *([^<]*)</option>";
+	private final static String PATTERN_STOP_NAME_AND_CODE_DIRECTION_GOING_DESKTOP = "(Μετάβαση|Going)</h3>(.*)</td> *<td";
+	private final static String PATTERN_STOP_NAME_AND_CODE_DIRECTION_RETURN_DESKTOP = "(Return|Επιστροφή)</h3>(.*)</td> *</tr>";
+	private final static String PATTERN_STOP_NAME_AND_CODE_DESKTOP = "fetchStasis[^0-9]([0-9]*)[^0-9]\">([^<]*)[ 	]*<strong>[^0-9]([0-9]*)[^0-9]</strong>";
+
 	private final static String REPLACEMENT_STOP_NAME = "$1,$2";
 	private final static String REPLACEMENT_LINE_NAME = "$1,$2,$3";
 	private final static String REPLACEMENT_LINE_POSITION = "$2,$1";
@@ -112,6 +116,49 @@ public class OasthWebPageParser {
 					.append(linePrefix)
 					.append(matcher.group().replaceAll(
 							PATTERN_STOP_NAME_DESKTOP, REPLACEMENT_STOP_NAME))
+					.append('\n');
+		}
+
+		return bla.toString();
+	}
+
+	public static String parseStopNamesAndCodes(String response, int lineId,
+			int direction, String language) {
+		StringBuilder bla = new StringBuilder();
+		int sorder = 1;
+
+		final String linePrefix = lineId + "," + direction + "," + language
+				+ ",";
+		String regExPattern = PATTERN_STOP_NAME_AND_CODE_DIRECTION_GOING_DESKTOP;
+
+		if (direction == 2) {
+			regExPattern = PATTERN_STOP_NAME_AND_CODE_DIRECTION_RETURN_DESKTOP;
+
+		}
+		// In case you would like to ignore case sensitivity you could use this
+		// statement
+		// Pattern pattern = Pattern.compile("\\s+", Pattern.CASE_INSENSITIVE);
+		Matcher matcher = Pattern.compile(regExPattern).matcher(response);
+
+		// Check all occurance
+		while (matcher.find()) {
+			bla.append(matcher.group().replaceAll(regExPattern, "$2")).append(
+					'\n');
+		}
+
+		response = bla.toString();
+		bla.delete(0, bla.length());
+
+		matcher = Pattern.compile(PATTERN_STOP_NAME_AND_CODE_DESKTOP).matcher(
+				response);
+
+		// Check all occurance
+		while (matcher.find()) {
+			bla.append(sorder++)
+					.append(',')
+					.append(linePrefix)
+					.append(matcher.group().replaceAll(
+							PATTERN_STOP_NAME_AND_CODE_DESKTOP, "$1,$2,$3"))
 					.append('\n');
 		}
 
