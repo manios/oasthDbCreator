@@ -13,7 +13,7 @@ public class OasthWebPageParser {
 	private final static String PATTERN_LINE_NAME_DESKTOP = "<option value=\"([0-9]+)\">([^: ]*) *: *([^<]*)</option>";
 	private final static String PATTERN_STOP_NAME_AND_CODE_DIRECTION_GOING_DESKTOP = "(Μετάβαση|Going)</h3>(.*)</td> *<td";
 	private final static String PATTERN_STOP_NAME_AND_CODE_DIRECTION_RETURN_DESKTOP = "(Return|Επιστροφή)</h3>(.*)</td> *</tr>";
-	private final static String PATTERN_STOP_NAME_AND_CODE_DESKTOP = "fetchStasis[^0-9]([0-9]*)[^0-9]\">([^<]*)[ 	]*<strong>[^0-9]([0-9]*)[^0-9]</strong>";
+	private final static String PATTERN_STOP_NAME_AND_CODE_DESKTOP = "fetchStasis[^0-9]([0-9]*)[^0-9]\">([^<]*)[ 	]+<strong>[^0-9]([0-9]*)[^0-9]</strong>";
 
 	private final static String REPLACEMENT_STOP_NAME = "$1,$2";
 	private final static String REPLACEMENT_LINE_NAME = "$1,$2,$3";
