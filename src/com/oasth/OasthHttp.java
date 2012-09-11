@@ -62,17 +62,17 @@ public class OasthHttp {
 	public static String getStopNamesAndCodesGreek(int lineId)
 			throws IOException {
 		return getStopNamesAndCodes(STOP_NAME_AND_CODE_URL_GR, lineId,
-				LANGUAGE_GREEK);
+				LANGUAGE_GREEK, 19000);
 	}
 
 	public static String getStopNamesAndCodesEnglish(int lineId)
 			throws IOException {
 		return getStopNamesAndCodes(STOP_NAME_AND_CODE_URL_EN, lineId,
-				LANGUAGE_ENGLISH);
+				LANGUAGE_ENGLISH, 24850);
 	}
 
 	private static String getStopNamesAndCodes(String urlString, int lineId,
-			int language) throws IOException {
+			int language, long bytesToSkip) throws IOException {
 		// long startTime0 = System.currentTimeMillis();
 
 		URL oracle = new URL(String.format(urlString, lineId));
@@ -88,7 +88,7 @@ public class OasthHttp {
 				yc.getInputStream(), "UTF8"), 8000);
 		String inputLine;
 
-		in.skip(19000);
+		in.skip(bytesToSkip);
 		while ((inputLine = in.readLine()) != null)
 			sbu.append(inputLine);
 		in.close();
