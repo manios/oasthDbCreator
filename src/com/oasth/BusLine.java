@@ -4,6 +4,7 @@ public class BusLine {
 	private int id;
 	private String number;
 	private String name;
+	private boolean circular;
 
 	public BusLine(String rawLine) {
 		String testio[] = rawLine.split(",");
@@ -42,8 +43,15 @@ public class BusLine {
 		this.name = name;
 	}
 
+	public boolean isCircular() {
+		return circular;
+	}
+
+	public void setCircular(boolean circular) {
+		this.circular = circular;
+	}
+
 	public String toCsv() {
 		return this.id + "," + this.number + "," + this.name;
 	}
-
 }
