@@ -11,8 +11,6 @@ public class OasthWebPageParser {
 
 	private final static String PATTERN_STOP_NAME_DESKTOP = "<option value=\"([0-9]+)\">([^<]*)</option>";
 	private final static String PATTERN_LINE_NAME_DESKTOP = "<option value=\"([0-9]+)\">([^: ]*) *: *([^<]*)</option>";
-	private final static String PATTERN_STOP_NAME_AND_CODE_DIRECTION_GOING_DESKTOP = "(Μετάβαση|Going)</h3>(.*)</td> *<td";
-	private final static String PATTERN_STOP_NAME_AND_CODE_DIRECTION_RETURN_DESKTOP = "(Return|Επιστροφή)</h3>(.*)</td> *</tr>";
 	private final static String PATTERN_STOP_NAME_AND_CODE_DESKTOP = "fetchStasis[^0-9]([0-9]*)[^0-9]\">([^<]*)[ 	]+<strong>[^0-9]([0-9]*)[^0-9]</strong>";
 
 	private final static String REPLACEMENT_STOP_NAME = "$1,$2";
@@ -127,29 +125,29 @@ public class OasthWebPageParser {
 
 	public static String parseStopNamesAndCodes(String response, int lineId,
 			int direction, String language) {
+		final String valDataPattern = "<table.*</table>";
+
 		StringBuilder bla = new StringBuilder();
 		int sorder = 1;
 
-		final String linePrefix = lineId + "," + direction + "," + language
-				+ ",";
-		String regExPattern = PATTERN_STOP_NAME_AND_CODE_DIRECTION_GOING_DESKTOP;
-
-		if (direction == 2) {
-			regExPattern = PATTERN_STOP_NAME_AND_CODE_DIRECTION_RETURN_DESKTOP;
-
-		}
-		// In case you would like to ignore case sensitivity you could use this
-		// statement
-		// Pattern pattern = Pattern.compile("\\s+", Pattern.CASE_INSENSITIVE);
-		Matcher matcher = Pattern.compile(regExPattern).matcher(response);
+		Matcher matcher = Pattern.compile(valDataPattern).matcher(response);
 
 		// Check all occurance
 		while (matcher.find()) {
-			bla.append(matcher.group().replaceAll(regExPattern, "$2")).append(
-					'\n');
+			bla.append(matcher.group());
 		}
 
-		response = bla.toString();
+		String strUnits[] = bla.toString().split("<td", -2);
+
+		final String linePrefix = lineId + "," + direction + "," + language
+				+ ",";
+
+		if (direction == 1) {
+			response = strUnits[strUnits.length - 2];
+		} else {
+			response = strUnits[strUnits.length - 1];
+		}
+
 		bla.delete(0, bla.length());
 
 		matcher = Pattern.compile(PATTERN_STOP_NAME_AND_CODE_DESKTOP).matcher(
