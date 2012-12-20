@@ -21,6 +21,9 @@ public class OasthWebPageParser {
 	private final static String REPLACEMENT_STOP_POSITION = "$2,$1,$3";
 	private final static String e = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
+	private final static String LINE_IS_CIRCULAR_GR = "^.*Η γραμμή έχει ίδια αφετηρία και τέρμα και εκτελεί κυκλικό δρομολόγιο.*$";
+	private final static String LINE_IS_CIRCULAR_EN = "^.*The route is round route and has the same terminus and departure point.*$";
+
 	public static ArrayList<String> parse(String response, String pattern,
 			String replacement) {
 		ArrayList<String> bla = new ArrayList<String>();
@@ -287,6 +290,36 @@ public class OasthWebPageParser {
 
 		return parseDecodedStopPositions(stopPos.toString(), lineId, direction);
 
+	}
+
+	/**
+	 * Determines if a bus line has round route and has the same terminus and
+	 * departure point.
+	 * 
+	 * @param response
+	 *            The html response from <br>
+	 *            <a href=
+	 *            "http://oasth.gr/service/stasis_eng.php?ml=linenumber"
+	 *            >http://oasth.gr/service/stasis_eng.php?ml=linenumber</a> or<br>
+	 *            <a href=
+	 *            "http://oasth.gr/service/stasis.php?ml=linenumber">http
+	 *            ://oasth.gr/service/stasis.php?ml=linenumber</a><br>
+	 *            <p>
+	 *            For example call this method with the output of<br>
+	 *            <a href= "http://oasth.gr/service/stasis_eng.php?ml=67"
+	 *            >http://oasth.gr/service/stasis_eng.php?ml=67</a > or<br>
+	 *            <a href=
+	 *            "http://oasth.gr/service/stasis.php?ml=linenumber">http
+	 *            ://oasth.gr/service/stasis.php?ml=linenumber</a > ><br>
+	 * @return True if the bus line has a round route
+	 */
+	public static boolean isCircularLine(String response) {
+		boolean isCirc = false;
+
+		isCirc = response.matches(LINE_IS_CIRCULAR_EN)
+				|| response.matches(LINE_IS_CIRCULAR_GR);
+
+		return isCirc;
 	}
 
 	public static String aniMarker(String a) {
