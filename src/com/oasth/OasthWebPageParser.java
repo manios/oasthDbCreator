@@ -13,11 +13,8 @@ public class OasthWebPageParser {
 	private final static String PATTERN_LINE_NAME_DESKTOP = "<option value=\"([0-9]+)\">([^: ]*) *: *([^<]*)</option>";
 	private final static String PATTERN_STOP_NAME_AND_CODE_DESKTOP = "fetchStasis[^0-9]([0-9]*)[^0-9]\">([^<]*)[ 	]+<strong>[^0-9]([0-9]*)[^0-9]</strong>";
 
-	private final static String REPLACEMENT_STOP_NAME = "$1,$2";
-	private final static String REPLACEMENT_LINE_NAME = "$1,$2,$3";
-	private final static String REPLACEMENT_LINE_POSITION = "$2,$1";
-	private final static String REPLACEMENT_STOP_POSITION = "$2,$1,$3";
 	private final static String e = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+	private static final char COMMA_CHAR = ',';
 
 	private final static String LINE_IS_CIRCULAR_GR = "^.*Η γραμμή έχει ίδια αφετηρία και τέρμα και εκτελεί κυκλικό δρομολόγιο.*$";
 	private final static String LINE_IS_CIRCULAR_EN = "^.*The route is round route and has the same terminus and departure point.*$";
@@ -31,7 +28,7 @@ public class OasthWebPageParser {
 		// Pattern pattern = Pattern.compile("\\s+", Pattern.CASE_INSENSITIVE);
 		Matcher matcher = Pattern.compile(pattern).matcher(response);
 
-		// Check all occurance
+		// Check all occurrences
 		while (matcher.find()) {
 			bla.add(matcher.group().replaceAll(pattern, replacement));
 		}
@@ -47,7 +44,7 @@ public class OasthWebPageParser {
 		// Pattern pattern = Pattern.compile("\\s+", Pattern.CASE_INSENSITIVE);
 		Matcher matcher = Pattern.compile(pattern).matcher(response);
 
-		// Check all occurance
+		// Check all occurrences
 		while (matcher.find()) {
 			bla.append(matcher.group().replaceAll(pattern, replacement))
 					.append("\n");
@@ -67,9 +64,9 @@ public class OasthWebPageParser {
 		// Check all occurance
 		while (matcher.find()) {
 
-			bla.append(
-					matcher.group().replaceAll(PATTERN_LINE_NAME_DESKTOP,
-							REPLACEMENT_LINE_NAME)).append("\n");
+			bla.append(matcher.group(1)).append(COMMA_CHAR)
+					.append(matcher.group(2)).append(COMMA_CHAR)
+					.append(matcher.group(3)).append("\n");
 		}
 
 		int firstNline = bla.indexOf("\n");
@@ -89,8 +86,8 @@ public class OasthWebPageParser {
 
 		// Check all occurance
 		while (matcher.find()) {
-			bli.add(new BusLine(matcher.group().replaceAll(
-					PATTERN_LINE_NAME_DESKTOP, REPLACEMENT_LINE_NAME)));
+			bli.add(new BusLine(Integer.valueOf(matcher.group(1)), matcher
+					.group(2), matcher.group(3)));
 		}
 		bli.remove(0);
 		return bli;
@@ -112,12 +109,9 @@ public class OasthWebPageParser {
 
 		// Check all occurance
 		while (matcher.find()) {
-			bla.append(sorder++)
-					.append(',')
-					.append(linePrefix)
-					.append(matcher.group().replaceAll(
-							PATTERN_STOP_NAME_DESKTOP, REPLACEMENT_STOP_NAME))
-					.append('\n');
+			bla.append(sorder++).append(COMMA_CHAR).append(linePrefix)
+					.append(matcher.group(1)).append(COMMA_CHAR)
+					.append(matcher.group(2)).append('\n');
 		}
 
 		return bla.toString();
@@ -132,7 +126,7 @@ public class OasthWebPageParser {
 
 		Matcher matcher = Pattern.compile(valDataPattern).matcher(response);
 
-		// Check all occurance
+		// Check all occurrences
 		while (matcher.find()) {
 			bla.append(matcher.group());
 		}
@@ -153,14 +147,12 @@ public class OasthWebPageParser {
 		matcher = Pattern.compile(PATTERN_STOP_NAME_AND_CODE_DESKTOP).matcher(
 				response);
 
-		// Check all occurance
+		// Check all occurrences
 		while (matcher.find()) {
-			bla.append(sorder++)
-					.append(',')
-					.append(linePrefix)
-					.append(matcher.group().replaceAll(
-							PATTERN_STOP_NAME_AND_CODE_DESKTOP, "$1,$2,$3"))
-					.append('\n');
+			bla.append(sorder++).append(',').append(linePrefix)
+					.append(matcher.group(1)).append(COMMA_CHAR)
+					.append(matcher.group(2)).append(COMMA_CHAR)
+					.append(matcher.group(3)).append('\n');
 		}
 
 		return bla.toString();
@@ -196,13 +188,13 @@ public class OasthWebPageParser {
 		Matcher matcher = Pattern.compile(PATTERN_STOP_POSITION).matcher(
 				response);
 
-		// Check all occurance
+		// Check all occurrence
 		while (matcher.find()) {
-			bla.append(sorder++)
-					.append(',')
-					.append(linePrefix)
-					.append(matcher.group().replaceAll(PATTERN_STOP_POSITION,
-							REPLACEMENT_STOP_POSITION)).append('\n');
+			bla.append(sorder++).append(COMMA_CHAR).append(linePrefix)
+					.append(matcher.group(2)).append(COMMA_CHAR)
+					.append(matcher.group(1)).append(COMMA_CHAR)
+					.append(matcher.group(3)).append('\n');
+
 		}
 
 		return bla.toString();
@@ -238,13 +230,11 @@ public class OasthWebPageParser {
 		Matcher matcher = Pattern.compile(PATTERN_LINE_POSITION).matcher(
 				response);
 
-		// Check all occurance
+		// Check all occurrence
 		while (matcher.find()) {
-			bla.append(sorder++)
-					.append(',')
-					.append(linePrefix)
-					.append(matcher.group().replaceAll(PATTERN_LINE_POSITION,
-							REPLACEMENT_LINE_POSITION)).append('\n');
+			bla.append(sorder++).append(',').append(linePrefix)
+					.append(matcher.group(2)).append(COMMA_CHAR)
+					.append(matcher.group(1)).append('\n');
 		}
 
 		return bla.toString();
@@ -260,10 +250,9 @@ public class OasthWebPageParser {
 		Matcher matcher = Pattern.compile(
 				PATTERN_LINE_STOP_POSITION_BEF_DECODING).matcher(response);
 
-		// Check all occurance
+		// Check all occurrences
 		while (matcher.find()) {
-			linePos.append(aniMarker(matcher.group().replaceAll(
-					PATTERN_LINE_STOP_POSITION_BEF_DECODING, "$1")));
+			linePos.append(aniMarker(matcher.group(1)));
 		}
 
 		return parseDecodedLinePositions(linePos.toString(), lineId, direction);
@@ -280,10 +269,9 @@ public class OasthWebPageParser {
 		Matcher matcher = Pattern.compile(
 				PATTERN_LINE_STOP_POSITION_BEF_DECODING).matcher(response);
 
-		// Check all occurance
+		// Check all occurrences
 		while (matcher.find()) {
-			stopPos.append(aniMarker(matcher.group().replaceAll(
-					PATTERN_LINE_STOP_POSITION_BEF_DECODING, "$2")));
+			stopPos.append(aniMarker(matcher.group(2)));
 		}
 
 		return parseDecodedStopPositions(stopPos.toString(), lineId, direction);
