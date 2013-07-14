@@ -1,0 +1,36 @@
+#!/bin/bash
+
+
+rm -f -r "./oasth.db"
+
+sqlite3 ./oasth.db <<SQL_ENTRY_TAG_1
+create temporary table l_en (id integer ,num text,name text);
+create temporary table l_gr (id integer ,num text,name text);
+create temporary table b_en (id integer, name text);
+create temporary table b_gr (id integer, name text);
+create temporary table r_en (direction integer,lineid integer,stopid integer,stopname text,sorder integer);
+create temporary table r_gr (direction integer,lineid integer,stopid integer,stopname text,sorder integer );
+create table busline (id integer ,num text,name_gr text, name_en text);
+create table busstop (id integer ,name_gr text,name_en text);
+create table busroute (lineid integer, stopid integer, sorder integer, direction integer);
+create table android_metadata (locale TEXT );
+INSERT INTO android_metadata VALUES ('en_US');
+.separator ","
+.import routeimport_en.csv r_en
+.import routeimport_gr.csv r_gr
+.import buslines_en.csv l_en
+.import buslines_gr.csv l_gr
+insert into b_en select distinct stopid,stopname from r_en;
+insert into b_gr select distinct stopid,stopname from r_gr;
+insert into busline select lg.id,le.num,lg.name,le.name from l_en le, l_gr lg where le.id = lg.id;
+insert into busstop select bg.id,bg.name,be.name from b_en be, b_gr bg where be.id = bg.id;
+insert into busroute select lineid,stopid,sorder,direction from r_gr;
+create index idx_busline_id on busline(id);
+create index idx_busstop_id on busstop(id);
+create index idx_busroute_lineid on busroute(lineid);
+create index idx_busroute_stopid on busroute(stopid);
+CREATE VIEW v_stop as select busstop.id as stopid ,busroute.sorder as sorder, busstop.name_gr as stopname_gr, busstop.name_en as stopname_en, busroute.lineid as lineid, busroute.direction as direction from busroute , busstop where busroute.stopid = busstop.id order by busroute.sorder;
+CREATE VIEW v_linepass as  select distinct busline.id as lineid,  busline.num as busnum, busline.name_gr as busname_gr, busline.name_en as busname_en, busroute.stopid as stopid, busroute.direction as direction from busroute , busline where busline.id = busroute.lineid  order by busline.num;
+vacuum;
+SQL_ENTRY_TAG_1
+
