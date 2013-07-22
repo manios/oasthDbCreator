@@ -1,4 +1,4 @@
-package com.cmanios.oasthdbcreator;
+package com.manios.oasthdbcreator;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;

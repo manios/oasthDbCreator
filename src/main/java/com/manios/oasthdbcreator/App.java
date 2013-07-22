@@ -1,4 +1,4 @@
-package com.cmanios.oasthdbcreator;
+package com.manios.oasthdbcreator;
 
 /**
  * Hello world!

@@ -1,4 +1,4 @@
-package com.cmanios.oasthdbcreator;
+package com.manios.oasthdbcreator;
 
 public class BusLine {
 	private int id;

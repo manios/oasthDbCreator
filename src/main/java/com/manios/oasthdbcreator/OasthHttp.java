@@ -1,4 +1,4 @@
-package com.cmanios.oasthdbcreator;
+package com.manios.oasthdbcreator;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -95,7 +95,7 @@ public class OasthHttp {
 
 		// long endTime0 = System.currentTimeMillis();
 		// Log.d(TAG, "Spent to donwload" + +(endTime0 - startTime0));
-
+                
 		return sbu.toString();
 	}
 
