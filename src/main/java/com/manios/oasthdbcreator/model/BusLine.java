@@ -2,25 +2,26 @@ package com.manios.oasthdbcreator.model;
 
 public class BusLine {
 
-    private String uid;
-    private String groupUid;
+    private int uid;
+    private int groupUid;
+    private String lineNumber;
     private String name;
     private String nameEng;
     private boolean circular;
 
-    public String getUid() {
+    public int getUid() {
         return uid;
     }
 
-    public void setUid(String uid) {
+    public void setUid(int uid) {
         this.uid = uid;
     }
 
-    public String getGroupUid() {
+    public int getGroupUid() {
         return groupUid;
     }
 
-    public void setGroupUid(String groupUid) {
+    public void setGroupUid(int groupUid) {
         this.groupUid = groupUid;
     }
 
@@ -46,5 +47,18 @@ public class BusLine {
 
     public void setCircular(boolean circular) {
         this.circular = circular;
+    }
+
+    public String getLineNumber() {
+        return lineNumber;
+    }
+
+    public void setLineNumber(String lineNumber) {
+        this.lineNumber = lineNumber;
+    }
+
+    @Override
+    public String toString() {
+        return "BusLine{" + "uid=" + uid + ", groupUid=" + groupUid + ", lineNumber=" + lineNumber + ", name=" + name + ", nameEng=" + nameEng + ", circular=" + circular + '}';
     }
 }
