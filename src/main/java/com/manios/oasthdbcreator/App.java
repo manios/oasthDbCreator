@@ -1,8 +1,11 @@
 package com.manios.oasthdbcreator;
 
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.manios.oasthdbcreator.services.BusLineService;
+import com.manios.oasthdbcreator.model.BusLine;
+import com.manios.oasthdbcreator.parser.BusStopPositionParser;
+import com.manios.oasthdbcreator.services.BusStopPositionService;
+import java.util.List;
+import org.slf4j.LoggerFactory;
 
 /**
  * Hello world!
@@ -23,19 +26,23 @@ import java.util.logging.Logger;
 // 71/32/7 --> saturday
 // 71/32/8 --> sunday
 // 
+// direction selection
 // http://oasth.gr/en/stopinfo/startstop/63/31/-2//?a=1
 // Άφιξη γραμμών στη στάση 01223
 // http://oasth.gr/en/stopinfo/updateArrivals/01223/?a=1
 public class App {
 
-    public static void main(String[] args) {
-        String response = "";
-        try {
-            response = HttpUtil.get("http://oasth.gr/en/routeinfo/list/71/32/7/?a=1", 0);
-        } catch (IOException ex) {
-            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        System.out.println(OasthWebPageParser.aniMarker(response));
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(App.class);
 
+    public static void main(String[] args) {
+        
+        List<BusLine> bList;
+        bList = new BusLineService().getBusLines();
+        
+        for (BusLine i : bList) {
+            logger.debug("{}", i);
+        }
+        
+        new BusStopPositionService().getBusLineStopPosition(67, 0,BusStopPositionService.DIRECTION_MOBILE_GOING);
     }
 }

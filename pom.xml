@@ -14,6 +14,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j.version>1.7.5</slf4j.version>
         <logback.version>1.0.13</logback.version>
+        <doclava.version>1.0.5</doclava.version>
     </properties>
 
     <dependencies>
@@ -44,4 +45,29 @@
         </dependency>
         
     </dependencies>
+    
+    <build>   
+        <plugins>
+        
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <bootclasspath>${sun.boot.class.path}</bootclasspath>
+                    <doclet>com.google.doclava.Doclava</doclet>
+                    <useStandardDocletOptions>false</useStandardDocletOptions>
+                    <docletArtifact>
+                        <groupId>com.google.doclava</groupId>
+                        <artifactId>doclava</artifactId>
+                        <version>${doclava.version}</version>
+                    </docletArtifact>
+                    <additionalparam>
+                        -hdf project.name "${project.name}"
+                        -d
+                        ${project.build.directory}/apidocs
+                        -quiet
+                    </additionalparam>
+                </configuration>
+            </plugin>
+        </plugins> 
+    </build>
 </project>
