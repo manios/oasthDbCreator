@@ -4,7 +4,7 @@ import com.manios.oasthdbcreator.services.BusLineService;
 import com.manios.oasthdbcreator.model.BusLine;
 import com.manios.oasthdbcreator.model.RouteWaypoint;
 import com.manios.oasthdbcreator.model.StopPosition;
-import com.manios.oasthdbcreator.parser.BusLineRoutePositionService;
+import com.manios.oasthdbcreator.services.BusLineRoutePositionService;
 import com.manios.oasthdbcreator.services.BusStopPositionService;
 import java.util.List;
 import org.slf4j.LoggerFactory;

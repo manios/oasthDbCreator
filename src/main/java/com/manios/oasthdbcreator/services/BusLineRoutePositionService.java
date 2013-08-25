@@ -1,7 +1,8 @@
-package com.manios.oasthdbcreator.parser;
+package com.manios.oasthdbcreator.services;
 
 import com.manios.oasthdbcreator.HttpUtil;
 import com.manios.oasthdbcreator.model.RouteWaypoint;
+import com.manios.oasthdbcreator.parser.BusStopPositionParser;
 import java.io.IOException;
 import java.util.List;
 import org.slf4j.LoggerFactory;
