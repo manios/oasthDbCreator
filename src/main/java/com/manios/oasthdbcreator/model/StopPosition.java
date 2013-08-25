@@ -20,4 +20,9 @@ public class StopPosition {
     public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
+
+    @Override
+    public String toString() {
+        return "StopPosition{" + "latitude=" + latitude + ", longitude=" + longitude + '}';
+    }
 }

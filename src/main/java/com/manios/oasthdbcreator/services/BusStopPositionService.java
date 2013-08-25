@@ -3,7 +3,6 @@ package com.manios.oasthdbcreator.services;
 import com.manios.oasthdbcreator.HttpUtil;
 import com.manios.oasthdbcreator.model.StopPosition;
 import com.manios.oasthdbcreator.parser.BusStopPositionParser;
-import com.manios.oasthdbcreator.parser.OasthDecoder;
 import java.io.IOException;
 import java.util.List;
 import org.slf4j.LoggerFactory;
@@ -27,7 +26,7 @@ public class BusStopPositionService {
         }
 
 
-        return new BusStopPositionParser().setStopPositionResponse(responseGr).getStopPositions();
+        return new BusStopPositionParser().setHttpResponse(responseGr).getStopPositions();
 
     }
 
