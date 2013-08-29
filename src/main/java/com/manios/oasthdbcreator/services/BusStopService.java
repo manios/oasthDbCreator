@@ -2,6 +2,7 @@ package com.manios.oasthdbcreator.services;
 
 import com.manios.oasthdbcreator.HttpUtil;
 import com.manios.oasthdbcreator.model.BusStop;
+import com.manios.oasthdbcreator.parser.BusStopParser;
 import java.io.IOException;
 import java.util.List;
 import org.slf4j.LoggerFactory;
@@ -14,14 +15,46 @@ public class BusStopService {
     public final static char DIRECTION_DESKTOP_GOING = 'a';
     public final static char DIRECTION_DESKTOP_RETURN = 'b';
 
-    public List<BusStop> getBusStops(int busLineUid, int busLineGroupUid) {
-        String responseGr = "";
-        String responseEn = "";
+    public List<BusStop> getBusStopsOutward(int busLineUid, int busLineGroupUid) {
+        String responseGoingGr = "";
+        String responseGoingEn = "";
+
+        String urlEnOutward = String.format(URL_BUSSTOPS_EN, busLineUid, busLineGroupUid, DIRECTION_DESKTOP_GOING);
+        String urlGrOutward = String.format(URL_BUSSTOPS_GR, busLineUid, busLineGroupUid, DIRECTION_DESKTOP_GOING);
 
         try {
-            responseGr = HttpUtil.get(URL_BUSSTOPS_GR, 0);
-            responseEn = HttpUtil.get(URL_BUSSTOPS_GR, 0);
+            responseGoingEn = HttpUtil.get(urlEnOutward, 0);
+            responseGoingGr = HttpUtil.get(urlGrOutward, 0);
 
+        } catch (IOException ex) {
+            logger.error("Error while downloading", ex);
+        }
+
+        new BusStopParser().setStopResponseEn(responseGoingEn).setStopResponseGr(responseGoingGr).parse();
+
+        //TODO replace null
+        return null;
+    }
+
+    public List<BusStop> getBusStopsReturn(int busLineUid, int busLineGroupUid) {
+        String responseGoingGr = "";
+        String responseGoingEn = "";
+        String responseReturnGr = "";
+        String responseReturnEn = "";
+
+        String urlEnOutward = String.format(URL_BUSSTOPS_EN, busLineUid, busLineGroupUid, DIRECTION_DESKTOP_GOING);
+        String urlEnReturn = String.format(URL_BUSSTOPS_EN, busLineUid, busLineGroupUid, DIRECTION_DESKTOP_RETURN);
+
+        String urlGrOutward = String.format(URL_BUSSTOPS_EN, busLineUid, busLineGroupUid, DIRECTION_DESKTOP_GOING);
+        String urlGrReturn = String.format(URL_BUSSTOPS_EN, busLineUid, busLineGroupUid, DIRECTION_DESKTOP_RETURN);
+
+        try {
+            responseGoingEn = HttpUtil.get(urlEnOutward, 0);
+            responseReturnEn = HttpUtil.get(urlEnReturn, 0);
+
+
+            responseGoingGr = HttpUtil.get(urlGrOutward, 0);
+            responseReturnGr = HttpUtil.get(urlGrReturn, 0);
 
         } catch (IOException ex) {
             logger.error("Error while downloading", ex);
@@ -30,6 +63,5 @@ public class BusStopService {
 
         //TODO replace null
         return null;
-
     }
 }
