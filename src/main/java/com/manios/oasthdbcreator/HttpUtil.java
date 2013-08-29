@@ -18,6 +18,8 @@ public class HttpUtil {
     }
     private final static StringBuilder sbu = new StringBuilder();
     private static final String ENCODING_UTF8 = "UTF8";
+    private static final String ENCODING_WINDOWS1253 = "windows-1253";
+    private static final String ENCODING_ISO8859_7 = "ISO8859_7";
     private static final int READ_BUFFER_SIZE = 8000;
 
     public static String post(String urlString, String postParams, long bytesToSkip) throws IOException {

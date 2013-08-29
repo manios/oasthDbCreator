@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 // 71/32/8 --> sunday
 // 
 // direction selection
-// http://oasth.gr/en/stopinfo/startstop/63/31/-2//?a=1
+// http://oasth.gr/en/stopinfo/startstop/63/31/-2/?a=1
 // Άφιξη γραμμών στη στάση 01223
 // http://oasth.gr/en/stopinfo/updateArrivals/01223/?a=1
 public class App {

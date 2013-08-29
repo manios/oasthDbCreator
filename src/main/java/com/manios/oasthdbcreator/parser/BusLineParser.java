@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 
 public class BusLineParser {
 
-    private final static String PATTERN_LINE = "<option value=.([^/]*)/([^/]*)/([^/]*)/>([^<]*)<span class=.lineDetails.[^:]*: ([^<]*)</span>[^<]*</option>";
+    private final static String PATTERN_LINE = "<option value=\"([^/\"]*)/([^/\"]*)/([^\"]*)\">([^<]*)<span[^>]*>[ 	]*:[ 	]*([^<]*)</span>";
 
     public static List<BusLine> parse(String httpString, String httpStringEng) {
         ArrayList<BusLine> bList = new ArrayList<BusLine>();
