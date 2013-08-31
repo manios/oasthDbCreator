@@ -38,4 +38,9 @@ public class BusStop {
     public void setPosition(StopPosition position) {
         this.position = position;
     }
+
+    @Override
+    public String toString() {
+        return "BusStop{" + "uid=" + uid + ", name=" + name + ", nameEng=" + nameEng + ", position=" + position + '}';
+    }
 }

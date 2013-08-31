@@ -2,10 +2,12 @@ package com.manios.oasthdbcreator;
 
 import com.manios.oasthdbcreator.services.BusLineService;
 import com.manios.oasthdbcreator.model.BusLine;
+import com.manios.oasthdbcreator.model.BusStop;
 import com.manios.oasthdbcreator.model.RouteWaypoint;
 import com.manios.oasthdbcreator.model.StopPosition;
 import com.manios.oasthdbcreator.services.BusLineRoutePositionService;
 import com.manios.oasthdbcreator.services.BusStopPositionService;
+import com.manios.oasthdbcreator.services.BusStopService;
 import java.util.List;
 import org.slf4j.LoggerFactory;
 
@@ -63,5 +65,13 @@ public class App {
         for (RouteWaypoint i : routePosList) {
             logger.debug("{}", i);
         }
+        
+        List <BusStop> stopNames ;
+        stopNames = new BusStopService().getBusStopsOutward(67, 23);
+        
+        for (BusStop i : stopNames) {
+            logger.debug("{}", i);
+        }
+        
     }
 }
