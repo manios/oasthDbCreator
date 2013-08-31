@@ -1,6 +1,6 @@
 package com.manios.oasthdbcreator.services;
 
-import com.manios.oasthdbcreator.HttpUtil;
+import com.manios.oasthdbcreator.util.HttpUtil;
 import com.manios.oasthdbcreator.model.BusStop;
 import com.manios.oasthdbcreator.parser.BusStopParser;
 import java.io.IOException;

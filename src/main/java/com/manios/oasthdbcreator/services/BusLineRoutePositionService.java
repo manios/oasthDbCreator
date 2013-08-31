@@ -1,6 +1,6 @@
 package com.manios.oasthdbcreator.services;
 
-import com.manios.oasthdbcreator.HttpUtil;
+import com.manios.oasthdbcreator.util.HttpUtil;
 import com.manios.oasthdbcreator.model.RouteWaypoint;
 import com.manios.oasthdbcreator.parser.BusStopPositionParser;
 import java.io.IOException;

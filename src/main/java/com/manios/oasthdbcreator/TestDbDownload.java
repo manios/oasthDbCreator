@@ -1,17 +1,10 @@
 package com.manios.oasthdbcreator;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import com.manios.oasthdbcreator.util.FileUtils;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.util.ArrayList;
 
-import org.omg.CORBA.Environment;
 
 public class TestDbDownload {
 	/** directory in which we store parsed csv data */
