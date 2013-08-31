@@ -1,8 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.manios.oasthdbcreator.util;
+
+import java.util.Random;
 
 /**
  *
@@ -17,4 +15,14 @@ public class UserAgentUtil {
         "Mozilla/5.0 (Linux; U; Android 4.1.2; el-gr; GT-P3110 Build/JZO54K) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Safari/534.30",
         "Mozilla/5.0 (Linux; U; Android 4.0.4; el-gr; SonyST21i2 Build/11.0.A.6.5) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30",
         "Mozilla/5.0 (compatible; MSIE 9.0; Windows Phone OS 7.5; Trident/5.0; IEMobile/9.0; SAMSUNG; GT-I8350)"};
+
+    /**
+     * Returns a random mobile browser user agent String from
+     * {@link #MOBILE_USER_AGENTS} array.
+     *
+     */
+    public static String getRandomMobileUserAgent() {
+
+        return MOBILE_USER_AGENTS[new Random().nextInt(MOBILE_USER_AGENTS.length)];
+    }
 }

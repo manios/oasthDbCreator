@@ -151,7 +151,7 @@ public class HttpUtil {
     }
 
     private static void populateMobileHttpHeaders(URLConnection urlCon, final String referer, boolean isAjax) {
-        urlCon.setRequestProperty("User-Agent", "Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X; en-us) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Mobile/7A341 Safari/528.16");
+        urlCon.setRequestProperty("User-Agent", UserAgentUtil.getRandomMobileUserAgent());
         urlCon.setRequestProperty("Referer", referer);
         urlCon.setRequestProperty("Accept-Language", "el-gr,el;q=0.8,en-us;q=0.5,en;q=0.3");
         urlCon.setRequestProperty("Accept-Charset", "ISO-8859-7,utf-8;q=0.7,*;q=0.7");
