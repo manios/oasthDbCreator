@@ -41,4 +41,17 @@ public class FileUtils {
 		out.close();
 
 	}
+
+	public static void writeByteArrayToFile(byte[] buffer, File f)
+			throws IOException {
+
+		// create a FileOutputStream for the given file
+		FileOutputStream fileOuputStream = new FileOutputStream(f);
+
+		// write array of bytes into file
+		fileOuputStream.write(buffer);
+
+		// close stream
+		fileOuputStream.close();
+	}	
 }
