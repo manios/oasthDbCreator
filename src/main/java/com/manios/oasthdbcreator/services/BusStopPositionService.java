@@ -29,11 +29,4 @@ public class BusStopPositionService {
         return new BusStopPositionParser().setHttpResponse(responseGr).getStopPositions();
 
     }
-
-    public List<StopPosition> getStopPosition(int stopUid) {
-
-        //TODO replace null
-        return null;
-
-    }
 }

@@ -2,7 +2,9 @@ package com.manios.oasthdbcreator.parser;
 
 import com.manios.oasthdbcreator.model.BusLine;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,5 +44,16 @@ public class BusLineParser {
 
         return bList;
 
+    }
+
+    public static Map<Integer, BusLine> parseToMap(String httpString, String httpStringEng) {
+        List<BusLine> bList = parse(httpString, httpStringEng);
+        Map<Integer, BusLine> lineMap = new HashMap<Integer, BusLine>();
+
+        for (BusLine i : bList) {
+            lineMap.put(i.getUid(), i);
+        }
+
+        return lineMap;
     }
 }
