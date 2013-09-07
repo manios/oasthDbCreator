@@ -9,6 +9,18 @@ public class BusLine {
     private String nameEng;
     private boolean circular;
 
+    public BusLine() {
+    }
+
+    public BusLine(BusLine bli) {
+        this.uid = bli.uid;
+        this.groupUid = bli.groupUid;
+        this.lineNumber = bli.lineNumber;
+        this.name = bli.name;
+        this.nameEng = bli.nameEng;
+        this.circular = bli.circular;
+    }
+
     public int getUid() {
         return uid;
     }

@@ -7,6 +7,16 @@ public class BusStop {
     private String nameEng;
     private StopPosition position;
 
+    public BusStop() {
+    }
+
+    public BusStop(BusStop bs) {
+        this.uid = bs.uid;
+        this.name = bs.name;
+        this.nameEng = bs.nameEng;
+        this.position = bs.position;
+    }
+
     public int getUid() {
         return uid;
     }

@@ -6,6 +6,13 @@ public class BusStopDTO extends BusStop {
 
     private int order;
 
+    public BusStopDTO() {
+    }
+
+    public BusStopDTO(BusStop bs) {
+        super(bs);
+    }
+
     public int getOrder() {
         return order;
     }

@@ -14,6 +14,10 @@ public class BusLineDTO extends BusLine {
         returnStops = new ArrayList<BusStopDTO>();
     }
 
+    public BusLineDTO(BusLine bl) {
+        super(bl);
+    }
+
     public List<BusStopDTO> getGoingStops() {
         return goingStops;
     }
@@ -28,5 +32,10 @@ public class BusLineDTO extends BusLine {
 
     public void setReturnStops(List<BusStopDTO> returnStops) {
         this.returnStops = returnStops;
+    }
+
+    @Override
+    public String toString() {
+        return "BusLineDTO{" + "goingStops=" + goingStops + ", returnStops=" + returnStops + '}';
     }
 }

@@ -1,5 +1,6 @@
 package com.manios.oasthdbcreator;
 
+import com.manios.oasthdbcreator.dto.BusLineDTO;
 import com.manios.oasthdbcreator.services.BusLineService;
 import com.manios.oasthdbcreator.model.BusLine;
 import com.manios.oasthdbcreator.model.BusStop;
@@ -65,13 +66,17 @@ public class App {
         for (RouteWaypoint i : routePosList) {
             logger.debug("{}", i);
         }
-        
-        List <BusStop> stopNames ;
+
+        List<BusStop> stopNames;
         stopNames = new BusStopService().getBusStopsOutward(67, 23);
-        
+
         for (BusStop i : stopNames) {
             logger.debug("{}", i);
         }
-        
+
+        BusLineDTO bListDTO;
+        bListDTO = new BusLineService().getBusLineDTO(67);
+        logger.debug("{}", bListDTO);
+
     }
 }
