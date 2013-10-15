@@ -1,7 +1,9 @@
 package com.manios.oasthdbcreator;
 
 import com.manios.oasthdbcreator.parser.BusStopParser;
+import com.manios.oasthdbcreator.parser.BusStopPositionParser;
 import com.manios.oasthdbcreator.parser.OasthDecoder;
+import com.manios.oasthdbcreator.parser.RouteMarkerParser;
 import org.slf4j.LoggerFactory;
 
 public class DecoderTest {
@@ -38,13 +40,32 @@ public class DecoderTest {
 //        String myRespEl = OasthDecoder.aniMarker(resp02ASIkeaNsStathmosEl);
 //        String myRespEn = OasthDecoder.aniMarker(resp02ASIkeaNsStathmosEn);
 
-//        logger.debug(myRespEl);
-//        logger.debug(myRespEn);
+        logger.debug(myRespEl);
+        logger.debug(myRespEn);
+
+        String stoPos = "TkRBdU5UUTRNalk1TERJeUxqazRORFEhTkRWOE5EQXVOVFV3T0RNc01qSXVPVGd5TWpZeGZEUXdMalUxTlRVMk1EUXNNakl1T1RjNU5UYyFPSHcwTUM0MU5UZ3hNRFEwTERJeUxqayFPREF3TWpkOE5EQXVOVFl6TVRNd01pd3lNaTQ1TnpVNU9UVXlmRFF3TGpVMk5UazBNU3d5TWk0NU56VXlORFE1ZkRRd0xqVSFNREUwT0Rrc01qSXVPVGN6TWpnd01YdzBNQzQxTnpJek9EQTRMREl5TGprIU1qQTRNelI4TkRBdU5UYzFNVGt4Tml3eU1pNDVOekEyTnpVeWZEUXdMalUhTnprMk9Td3lNaTQ1TmpreU5UQTBmRFF3TGpVNE1UVTJORFlzTWpJdU9UWTJNamN5Tm53ME1DNDFPRE0yTkRZekxESXlMamsyTkRZeE9UVjhOREF1TlRnMU56SSFPU3d5TWk0NU5qTXhOVEF4ZkRRd0xqVTROemcxTlRrc01qSXVPVFl4TkRReU5YdzBNQzQxT0RrIU1ESXNNakl1T1RVNU56YyFNbncwTUM0MU9USXlPVGNzTWpJdU9UVTRNakk0TVh3ME1DNDFPVFF6TXpBekxESXlMamsxT1RVMk56ZDhOREF1TlRrMk5qSTJOeXd5TWk0NU5qTXpOVGt5ZkRRd0xqWXdNVEUhTVRjc01qSXVPVFkwTkRVNU5udzBNQzQyTURVd05EWTVMREl5TGprMk5ERXlORGQ4TkRBdU5qQTRNemd6T1N3eU1pNDVOak00TWpVIWZEUXdMall4TWpnd09UTXNNakl1T1RZek5EQSFNWHcwTUM0Mk1UWXpPRFUxTERJeUxqazJNekF6TmpOOE5EQXVOakl3TWpJc01qSXVPVFl5TmpJMWZEUXdMall5TWpZNE9EY3NNakl1T1RZeU5USXlmRFF3TGpZeU5ETSFOVElzTWpJdU9UWXhOamcwTiF3ME1DNDJNalk1TkRZIUxESXlMamsxT1RReE1qSjhOREF1TmpJNU1EQXpPU3d5TWk0NU5UY3hPRGMyZkRRd0xqWXpNRFkhT1RRc01qSXVPVFUwTkRNMk1YdzBNQzQyTXpFMU9Td3lNaTQ1TlRJMk9ETjhOREF1TmpNeU9Ea3hMREl5TGprMU1ERTFmRFF3TGpZek5ESXlOemNzTWpJdU9UUSFOamcwT1h3ME1DNDJNelUyTmpRMExESXlMamswTkRnMk16RjhOREF1TmpNMk16YzJOQ3d5TWk0NU5ETTBNVE0wZkRRd0xqWXpPRFEhTXpNc01qSXVPVE01TkRNNU5udzBNQzQyTXprIU1qZzVMREl5TGprek56QXpNbncwTUM0Mk5ESTBNVGtzTWpJdU9UTXhOekE1T1h3ME1DNDJORFUxTURnMUxESXlMamt5TnpRMk1nPT0grZNn";
+
+        String lineMarkersGoing = "TWpJdU9UZzBNeXcwTUM0MU5EZzFmREl5TGprNE5TdzBNQzQxTkRneGZESXlMams0TlRFc05EQXVOVFEhT1h3eU1pNDVPRFF5TERRd0xqVTBOelY4TWpJdU9UZ3pPU3cwTUM0MU5EYzFmREl5TGprNE1EZ3NOREF1TlRVek5Yd3lNaTQ1TnprNExEUXdMalUxTlRKOE1qSXVPVGM0TERRd0xqVTFPSHd5TWk0NU56YzBMRFF3TGpVMU9URjhNakl1T1RjMk5pdzBNQzQxTmpBNWZESXlMamshTlRjc05EQXVOVFkwTVh3eU1pNDVOelEhTERRd0xqVTJOemQ4TWpJdU9UYzBNU3cwTUM0MU5qZyFmREl5TGprIU1qZ3NOREF1TlRjd09Yd3lNaTQ1TnpJekxEUXdMalUhTVRsOE1qSXVPVGN3Tnl3ME1DNDFOelE1ZkRJeUxqazJPVFlzTkRBdU5UYyFNWHd5TWk0NU5qa3lMRFF3TGpVIU56bDhNakl1T1RZNE5pdzBNQzQxTnpnIWZESXlMamsyTnpjc05EQXVOVGM1Tm53eU1pNDVOall5TERRd0xqVTRNVFo4TWpJdU9UWTFOaXcwTUM0MU9ESXlmREl5TGprMk15dzBNQzQxT0RVNWZESXlMamsyTWpFc05EQXVOVGchZkRJeUxqazJNVFFzTkRBdU5UZyFPSHd5TWk0NU5qQXlMRFF3TGpVNE9USjhNakl1T1RVNE15dzBNQzQxT1RFeGZESXlMamsxTnpZc05EQXVOVGt4T1h3eU1pNDVOVGtzTkRBdU5Ua3lPWHd5TWk0NU5Ua3pMRFF3TGpVNU16UjhNakl1T1RVNU5TdzBNQzQxT1RNNWZESXlMamsxT1RZc05EQXVOVGswTlh3eU1pNDVOVGshTERRd0xqVTVOVEY4TWpJdU9UWXdNU3cwTUM0MU9UVTBmREl5TGprMk1URXNOREF1TlRrMU9Id3lNaTQ1TmpNeUxEUXdMalU1TmpaOE1qSXVPVFkwT0N3ME1DNDFPVGN6ZkRJeUxqazJORFlzTkRBdU5UazVNbnd5TWk0NU5qUTBMRFF3TGpZd01UaDhNakl1T1RZME1TdzBNQzQyTURReGZESXlMamsyTXprc05EQXVOakEyTlh3eU1pNDVOak0xTERRd0xqWXhNRGQ4TWpJdU9UWXpNeXcwTUM0Mk1USTVmREl5TGprMk15dzBNQzQyTVRVMmZESXlMamsyTWpnc05EQXVOakUhT0h3eU1pNDVOakkyTERRd0xqWXlNREY4TWpJdU9UWXlOQ3cwTUM0Mk1qSTRmREl5TGprMk1qTXNOREF1TmpJek5Id3lNaTQ1TmpFIUxEUXdMall5TkRKOE1qSXVPVFlzTkRBdU5qSTJOSHd5TWk0NU5UY3lMRFF3TGpZeU9Yd3lNaTQ1TlRVMExEUXdMall6TURKOE1qSXVPVFV6TVN3ME1DNDJNekV6ZkRJeUxqazBOellzTkRBdU5qTTBNbnd5TWk0NU5EUTRMRFF3TGpZek5UWjhNakl1T1RReU9DdzBNQzQyTXpZMmZESXlMamt6TnpZc05EQXVOak01Tkh3eU1pNDVNelUwTERRd0xqWTBNRFY4TWpJdU9UTTBOU3cwTUM0Mk5EQTVmREl5TGprek1qRXNOREF1TmpReU1Yd3lNaTQ1TWprNExEUXdMalkwTXpOOE1qSXVPVEkxTlN3ME1DNDJORFUyZkRJeUxqa3lOakVzTkRBdU5qUTJNbnd5TWk0NU1qWTBMRFF3TGpZME5qSjhNakl1T1RJIU55dzBNQzQyTkRVMQgrZNngrZNn";
+        logger.debug("Stops pos going: \n {}", OasthDecoder.aniMarker(stoPos));
+        logger.debug("lineMarkersGoing  going: \n {}", OasthDecoder.aniMarker(lineMarkersGoing));
+
 
         BusStopParser bpars =
                 new BusStopParser().setStopResponseEn(myRespEn).setStopResponseGr(myRespEl).parse();
 
         logger.debug("Stops outward: \n {}", bpars.getStopsOutward());
         logger.debug("Stops return: \n {}", bpars.getStopsReturn());
+
+
+        BusStopPositionParser stopPosParser = new BusStopPositionParser().setHttpResponse(myRespEl).parse();
+
+        logger.debug("Stop Positions outward: \n {}", stopPosParser.getPositionsOutward());
+        logger.debug("Stop Positions return: \n {}", stopPosParser.getPositionsReturn());
+
+        RouteMarkerParser routePosParser = new RouteMarkerParser().setHttpResponse(myRespEl).parse();
+
+        logger.debug("Route Markers outward: \n {}", routePosParser.getPositionsOutward());
+        logger.debug("Route Markers return: \n {}", routePosParser.getPositionsReturn());
+
     }
 }
