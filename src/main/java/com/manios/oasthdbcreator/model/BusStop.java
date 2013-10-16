@@ -5,7 +5,7 @@ public class BusStop {
     private int uid;
     private String name;
     private String nameEng;
-    private StopPosition position;
+    private GeoPosition position;
 
     public BusStop() {
     }
@@ -41,11 +41,11 @@ public class BusStop {
         this.nameEng = nameEng;
     }
 
-    public StopPosition getPosition() {
+    public GeoPosition getPosition() {
         return position;
     }
 
-    public void setPosition(StopPosition position) {
+    public void setPosition(GeoPosition position) {
         this.position = position;
     }
 
