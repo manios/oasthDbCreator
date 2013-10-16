@@ -3,6 +3,7 @@ package com.manios.oasthdbcreator;
 import com.manios.oasthdbcreator.parser.BusPositionParser;
 import com.manios.oasthdbcreator.parser.BusStopParser;
 import com.manios.oasthdbcreator.parser.BusStopPositionParser;
+import com.manios.oasthdbcreator.parser.LinesArrivalInStopParser;
 import com.manios.oasthdbcreator.parser.OasthDecoder;
 import com.manios.oasthdbcreator.parser.RouteMarkerParser;
 import org.slf4j.LoggerFactory;
@@ -77,9 +78,12 @@ public class DecoderTest {
 
 
         logger.debug("Current bus positions for line 67: {}", OasthDecoder.aniMarker(busPositions67Outward));
-        BusPositionParser vehiclePosPars = new BusPositionParser().setHttpResponse( OasthDecoder.aniMarker(busPositions67Outward)).parse();
+        BusPositionParser vehiclePosPars = new BusPositionParser().setHttpResponse(OasthDecoder.aniMarker(busPositions67Outward)).parse();
         logger.debug("Current bus positions for line 67: {}", vehiclePosPars.getBusPositions());
 
-        logger.debug("Stop info: {}", OasthDecoder.aniMarker(stopArrivalInfo));
+        logger.debug("Stop Arrival info: {}", OasthDecoder.aniMarker(stopArrivalInfo));
+        LinesArrivalInStopParser lineArrivalPars = new LinesArrivalInStopParser().setHttpResponse(OasthDecoder.aniMarker(stopArrivalInfo)).parse();
+        logger.debug("Stop Arrival info: {}", lineArrivalPars.getLineArrival());
+
     }
 }
