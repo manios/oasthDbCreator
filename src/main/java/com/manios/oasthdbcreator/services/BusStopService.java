@@ -3,8 +3,10 @@ package com.manios.oasthdbcreator.services;
 import com.manios.oasthdbcreator.dto.BusStopDTO;
 import com.manios.oasthdbcreator.util.HttpUtil;
 import com.manios.oasthdbcreator.model.BusStop;
-import com.manios.oasthdbcreator.model.StopPosition;
+import com.manios.oasthdbcreator.model.GeoPosition;
 import com.manios.oasthdbcreator.parser.BusStopParser;
+import com.manios.oasthdbcreator.parser.BusStopPositionParser;
+import com.manios.oasthdbcreator.parser.OasthDecoder;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,39 +15,32 @@ import org.slf4j.LoggerFactory;
 public class BusStopService {
 
     private final static org.slf4j.Logger logger = LoggerFactory.getLogger(BusStopService.class);
-    public final static String URL_BUSSTOPS_GR = "http://oasth.gr/el/stopinfo/route/%1$d/%2$d/%3$c/?a=1";
-    public final static String URL_BUSSTOPS_EN = "http://oasth.gr/en/stopinfo/route/%1$d/%2$d/%3$c/?a=1";
-    public final static char DIRECTION_DESKTOP_GOING = 'a';
-    public final static char DIRECTION_DESKTOP_RETURN = 'b';
-    private BusStopPositionService stopPositionService;
+    public final static String URL_BUSSTOPS = "http://oasth.gr/%1$s/routeinfo/list/%2$d/%3$d/1/?a=1";
+    public final static String LANGUAGE_EN = "en";
+    public final static String LANGUAGE_EL = "el";
+    private List<BusStop> stopsOutward;
+    private List<BusStop> stopsReturn;
+    private boolean isCircular = false;
 
-    public List<BusStop> getBusStopsOutward(int busLineUid, int busLineGroupUid) {
-
-        return getBusStops(busLineUid, busLineGroupUid, DIRECTION_DESKTOP_GOING);
+    public BusStopService() {
+        isCircular = false;
     }
 
-    public List<BusStop> getBusStopsReturn(int busLineUid, int busLineGroupUid) {
+    public List<BusStop> getBusStopsOutward() {
 
-        return getBusStops(busLineUid, busLineGroupUid, DIRECTION_DESKTOP_RETURN);
+        return stopsOutward;
     }
 
-    public List<BusStopDTO> getBusStopsOutwardDTO(int busLineUid, int busLineGroupUid) {
+    public List<BusStop> getBusStopsReturn() {
 
-        return getBusStopDTOList(busLineUid, busLineGroupUid, DIRECTION_DESKTOP_GOING);
+        return stopsReturn;
     }
 
-    public List<BusStopDTO> getBusStopsReturnDTO(int busLineUid, int busLineGroupUid) {
-
-        return getBusStopDTOList(busLineUid, busLineGroupUid, DIRECTION_DESKTOP_RETURN);
-    }
-
-    public List<BusStopDTO> getBusStopDTOList(int busLineUid, int busLineGroupUid, char direction) {
-        List<BusStop> bList = getBusStops(busLineUid, busLineGroupUid, direction);
-
+    public List<BusStopDTO> getBusStopsOutwardDTO() {
         List<BusStopDTO> bListDTO = new ArrayList<BusStopDTO>();
         int sorder = 0;
 
-        for (BusStop i : bList) {
+        for (BusStop i : stopsOutward) {
             BusStopDTO tmpDto = new BusStopDTO(i);
 
             tmpDto.setOrder(sorder++);
@@ -55,30 +50,66 @@ public class BusStopService {
         return bListDTO;
     }
 
-    public List<BusStop> getBusStops(int busLineUid, int busLineGroupUid, char direction) {
-        List<BusStop> busStopNames;
-        String responseGoingGr = "";
-        String responseGoingEn = "";
+    public List<BusStopDTO> getBusStopsReturnDTO() {
+        List<BusStopDTO> bListDTO = new ArrayList<BusStopDTO>();
+        int sorder = 0;
 
-        String urlEnOutward = String.format(URL_BUSSTOPS_EN, busLineUid, busLineGroupUid, direction);
-        String urlGrOutward = String.format(URL_BUSSTOPS_GR, busLineUid, busLineGroupUid, direction);
+        for (BusStop i : stopsReturn) {
+            BusStopDTO tmpDto = new BusStopDTO(i);
 
-        List<StopPosition> stopPosList = stopPositionService.getBusLineStopPosition(busLineUid, busLineGroupUid, direction);
+            tmpDto.setOrder(sorder++);
+            bListDTO.add(tmpDto);
+
+        }
+        return bListDTO;
+    }
+
+    public BusStopService getBusStops(int busLineUid, int busLineGroupUid) {
+        isCircular = false;
+
+        String responseGr = null;
+        String responseEn = null;
+
+        String urlStopsEn = String.format(URL_BUSSTOPS, LANGUAGE_EN, busLineUid, busLineGroupUid);
+        String urlStopsGr = String.format(URL_BUSSTOPS, LANGUAGE_EL, busLineUid, busLineGroupUid);
+
         int sorder = 0;
         try {
-            responseGoingEn = HttpUtil.get(urlEnOutward, 0);
-            responseGoingGr = HttpUtil.get(urlGrOutward, 0);
+            responseEn = HttpUtil.get(urlStopsEn, 0);
+            responseGr = HttpUtil.get(urlStopsGr, 0);
 
         } catch (IOException ex) {
             logger.error("Error while downloading", ex);
         }
 
-        busStopNames = new BusStopParser().setStopResponseEn(responseGoingEn).setStopResponseGr(responseGoingGr).parse();
+        // decode responses
+        responseEn = OasthDecoder.aniMarker(responseEn);
+        responseGr = OasthDecoder.aniMarker(responseGr);
 
-        // add positions to stops
-        for (BusStop i : busStopNames) {
-            i.setPosition(stopPosList.get(sorder++));
+        BusStopParser stopParser = new BusStopParser().setStopResponseEn(responseEn).setStopResponseGr(responseGr).parse();
+        stopsOutward = stopParser.getStopsOutward();
+        stopsReturn = stopParser.getStopsReturn();
+
+        // parse bus stop geographical positions
+        BusStopPositionParser stopPositionParser = new BusStopPositionParser().setHttpResponse(responseGr).parse();
+        List<GeoPosition> stopPositionsOutward = stopPositionParser.getPositionsOutward();
+        List<GeoPosition> stopPositionsReturn = stopPositionParser.getPositionsReturn();
+
+        isCircular = ((stopsReturn == null) || (stopsReturn.size() <= 0));
+
+        // set stop positions to outward bus stops
+        for (BusStop i : stopsOutward) {
+            i.setPosition(stopPositionsOutward.get(sorder++));
         }
-        return busStopNames;
+
+        // set stop positions to return bus stops
+        // if bus line is not circular
+        if (!isCircular) {
+            sorder = 0;
+            for (BusStop i : stopsReturn) {
+                i.setPosition(stopPositionsReturn.get(sorder++));
+            }
+        }
+        return this;
     }
 }

@@ -4,8 +4,6 @@ import com.manios.oasthdbcreator.dto.BusLineDTO;
 import com.manios.oasthdbcreator.dto.BusStopDTO;
 import com.manios.oasthdbcreator.util.HttpUtil;
 import com.manios.oasthdbcreator.model.BusLine;
-import com.manios.oasthdbcreator.model.BusStop;
-import com.manios.oasthdbcreator.parser.BusLineCircularParser;
 import com.manios.oasthdbcreator.parser.BusLineParser;
 import java.io.IOException;
 
@@ -19,8 +17,8 @@ public class BusLineService {
     public static String URL_BUSLINES_EN = "http://oasth.gr/en/";
     public static String URL_BUSLINE_DIRECTIONS_STARTSTOP_GR = "http://oasth.gr/el/stopinfo/startstop/%1$d/%1$d/-2/?a=1";
     public static String URL_BUSLINE_DIRECTIONS_STARTSTOP_EN = "http://oasth.gr/en/stopinfo/startstop/%1$d/%1$d/-2/?a=1";
-
     private BusStopService stopService;
+
     public List<BusLine> getBusLines() {
         String responseGr = "";
         String responseEn = "";
@@ -66,27 +64,19 @@ public class BusLineService {
         }
 
         stopService = new BusStopService();
-        
-        List<BusStopDTO> outwardStops = stopService.getBusStopsOutwardDTO(busLinoToReturn.getUid(), busLinoToReturn.getGroupUid());
-        List<BusStopDTO> returnStops = stopService.getBusStopsReturnDTO(busLinoToReturn.getUid(), busLinoToReturn.getGroupUid());
-        
+        stopService.getBusStops(busLinoToReturn.getUid(), busLinoToReturn.getGroupUid());
+
+        List<BusStopDTO> outwardStops = stopService.getBusStopsOutwardDTO();
+        List<BusStopDTO> returnStops = stopService.getBusStopsReturnDTO();
+
         busLinoToReturn.setGoingStops(outwardStops);
         busLinoToReturn.setReturnStops(returnStops);
-        
+
         return busLinoToReturn;
 
     }
 
     public boolean isCircularLine(int busLineUid, int busLineGroupUid) {
-        String responseGr = "";
-
-        try {
-            responseGr = HttpUtil.get(String.format(URL_BUSLINE_DIRECTIONS_STARTSTOP_EN, busLineUid, busLineGroupUid), 0);
-
-        } catch (IOException ex) {
-            logger.error("Error while downloading", ex);
-        }
-
-        return BusLineCircularParser.parse(responseGr);
+        return getBusLineDTO(busLineUid).isCircular();
     }
 }

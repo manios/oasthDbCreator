@@ -1,11 +1,14 @@
 package com.manios.oasthdbcreator;
 
+import com.manios.oasthdbcreator.dto.BusLineDTO;
 import com.manios.oasthdbcreator.parser.BusPositionParser;
 import com.manios.oasthdbcreator.parser.BusStopParser;
 import com.manios.oasthdbcreator.parser.BusStopPositionParser;
 import com.manios.oasthdbcreator.parser.LinesArrivalInStopParser;
 import com.manios.oasthdbcreator.parser.OasthDecoder;
 import com.manios.oasthdbcreator.parser.RouteMarkerParser;
+import com.manios.oasthdbcreator.services.BusLineService;
+import com.manios.oasthdbcreator.services.BusStopService;
 import org.slf4j.LoggerFactory;
 
 public class DecoderTest {
@@ -84,6 +87,24 @@ public class DecoderTest {
         logger.debug("Stop Arrival info: {}", OasthDecoder.aniMarker(stopArrivalInfo));
         LinesArrivalInStopParser lineArrivalPars = new LinesArrivalInStopParser().setHttpResponse(OasthDecoder.aniMarker(stopArrivalInfo)).parse();
         logger.debug("Stop Arrival info: {}", lineArrivalPars.getLineArrival());
+
+        BusStopService stopService = new BusStopService();
+        stopService.getBusStops(81, 40);
+        logger.debug("Stops for line 81 : \n{}", stopService.getBusStopsOutward());
+        logger.debug("Stops for line 81 : \n{}", stopService.getBusStopsOutward());
+
+        stopService.getBusStops(67, 23);
+        logger.debug("Stops for line 67 : \n{}", stopService.getBusStopsOutward());
+        logger.debug("Stops for line 67 : \n{}", stopService.getBusStopsReturn());
+
+        BusLineService lineService = new BusLineService();
+        BusLineDTO busLinen = lineService.getBusLineDTO(67);
+        logger.debug("Line information for line {} - {} with uid : {} \n{}", busLinen.getLineNumber(), busLinen.getName(), busLinen.getUid(), busLinen);
+
+        lineService = new BusLineService();
+        busLinen = lineService.getBusLineDTO(81);
+        logger.debug("Line information for line {} - {} with uid : {} \n{}", busLinen.getLineNumber(), busLinen.getName(), busLinen.getUid(), busLinen);
+
 
     }
 }

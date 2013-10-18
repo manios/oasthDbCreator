@@ -35,6 +35,11 @@ public class BusLineDTO extends BusLine {
     }
 
     @Override
+    public boolean isCircular() {
+        return ((returnStops == null) || (returnStops.size() <= 0));
+    }
+
+    @Override
     public String toString() {
         return "BusLineDTO{" + "goingStops=" + goingStops + ", returnStops=" + returnStops + '}';
     }
