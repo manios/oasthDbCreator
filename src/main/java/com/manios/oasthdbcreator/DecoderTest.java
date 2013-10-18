@@ -1,5 +1,7 @@
 package com.manios.oasthdbcreator;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.manios.oasthdbcreator.dto.BusLineDTO;
 import com.manios.oasthdbcreator.parser.BusPositionParser;
 import com.manios.oasthdbcreator.parser.BusStopParser;
@@ -9,13 +11,17 @@ import com.manios.oasthdbcreator.parser.OasthDecoder;
 import com.manios.oasthdbcreator.parser.RouteMarkerParser;
 import com.manios.oasthdbcreator.services.BusLineService;
 import com.manios.oasthdbcreator.services.BusStopService;
+import com.manios.oasthdbcreator.services.LineArrivalsService;
+import com.sun.org.apache.bcel.internal.generic.AALOAD;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DecoderTest {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(DecoderTest.class);
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws JsonProcessingException {
 
         // response from
         // http://oasth.gr/el/routeinfo/list/81/40/1/?a=1
@@ -102,8 +108,16 @@ public class DecoderTest {
         logger.debug("Line information for line {} - {} with uid : {} \n{}", busLinen.getLineNumber(), busLinen.getName(), busLinen.getUid(), busLinen);
 
         lineService = new BusLineService();
-        busLinen = lineService.getBusLineDTO(81);
+        busLinen = lineService.getBusLineDTO(71);
         logger.debug("Line information for line {} - {} with uid : {} \n{}", busLinen.getLineNumber(), busLinen.getName(), busLinen.getUid(), busLinen);
+
+        // add Jackson JSON mapper
+        ObjectMapper mapper = new ObjectMapper();
+        logger.debug("Line information for line :\n {} ", mapper.writerWithDefaultPrettyPrinter().writeValueAsString(busLinen));
+
+
+        LineArrivalsService lineArrService = new LineArrivalsService();
+        logger.debug("Line arrivals for stop : {} \n {} ", 1341, mapper.writerWithDefaultPrettyPrinter().writeValueAsString(lineArrService.getArrivalsForStop(1341,"el")));
 
 
     }

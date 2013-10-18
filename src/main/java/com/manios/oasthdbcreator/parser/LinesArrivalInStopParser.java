@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 public class LinesArrivalInStopParser {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(LinesArrivalInStopParser.class);
-    private static final String PATTERN_LINE_ARRIVAL_POSITION = "<span class=.busno.>([^<]*)</span>[^<]*<span class=.busname.>([^<]*)</span>[^<]*<span class=.busdet.>[^<]*</span>[^<]*<span class=.busariv.>arriving in <strong>([^<]*)</strong>";
+    private static final String PATTERN_LINE_ARRIVAL_POSITION = "<span class=.busno.>([^<]*)</span>[^<]*<span class=.busname.>([^<]*)</span>[^<]*<span class=.busdet.>[^<]*</span>[^<]*<span class=.busariv.>[^<]*<strong>([^<]*)</strong>";
     private static final String PATTERN_LINE_ARRIVAL_MINUTES = "([0-9]+)\'";
     private List<BusLineArrivalDTO> linesArrival;
     private String httpResponse;

@@ -1,13 +1,6 @@
 package com.manios.oasthdbcreator;
 
-import com.manios.oasthdbcreator.dto.BusLineDTO;
-import com.manios.oasthdbcreator.services.BusLineService;
-import com.manios.oasthdbcreator.model.BusLine;
 import com.manios.oasthdbcreator.model.BusStop;
-import com.manios.oasthdbcreator.model.RouteWaypoint;
-import com.manios.oasthdbcreator.model.StopPosition;
-import com.manios.oasthdbcreator.services.BusLineRoutePositionService;
-import com.manios.oasthdbcreator.services.BusStopPositionService;
 import com.manios.oasthdbcreator.services.BusStopService;
 import java.util.List;
 import org.slf4j.LoggerFactory;
@@ -41,42 +34,42 @@ public class App {
 
     public static void main(String[] args) {
 
-        List<BusLine> bList;
-        bList = new BusLineService().getBusLines();
-
-        for (BusLine i : bList) {
-            logger.debug("{}", i);
-        }
-
-        List<StopPosition> posList;
-
-        posList = new BusStopPositionService().getBusLineStopPosition(67, 0, BusStopPositionService.DIRECTION_MOBILE_GOING);
-
-        for (StopPosition i : posList) {
-            logger.debug("{}", i);
-        }
-
-
-        List<RouteWaypoint> routePosList;
-
-        routePosList = new BusLineRoutePositionService().getBusRouteWaypoints(67, 0, BusStopPositionService.DIRECTION_MOBILE_GOING);
-
-        logger.debug("\n\n\n========== Route Waypoints ========\n\n");
-
-        for (RouteWaypoint i : routePosList) {
-            logger.debug("{}", i);
-        }
-
+//        List<BusLine> bList;
+//        bList = new BusLineService().getBusLines();
+//
+//        for (BusLine i : bList) {
+//            logger.debug("{}", i);
+//        }
+//
+//        List<StopPosition> posList;
+//
+//        posList = new BusStopPositionService().getBusLineStopPosition(67, 0, BusStopPositionService.DIRECTION_MOBILE_GOING);
+//
+//        for (StopPosition i : posList) {
+//            logger.debug("{}", i);
+//        }
+//
+//
+//        List<RouteWaypoint> routePosList;
+//
+//        routePosList = new BusLineRoutePositionService().getBusRouteWaypoints(67, 0, BusStopPositionService.DIRECTION_MOBILE_GOING);
+//
+//        logger.debug("\n\n\n========== Route Waypoints ========\n\n");
+//
+//        for (RouteWaypoint i : routePosList) {
+//            logger.debug("{}", i);
+//        }
+//
         List<BusStop> stopNames;
-        stopNames = new BusStopService().getBusStopsOutward(67, 23);
+        stopNames = new BusStopService().getBusStops(67, 23).getBusStopsOutward();
 
         for (BusStop i : stopNames) {
             logger.debug("{}", i);
         }
-
-        BusLineDTO bListDTO;
-        bListDTO = new BusLineService().getBusLineDTO(67);
-        logger.debug("{}", bListDTO);
+//
+//        BusLineDTO bListDTO;
+//        bListDTO = new BusLineService().getBusLineDTO(67);
+//        logger.debug("{}", bListDTO);
 
     }
 }

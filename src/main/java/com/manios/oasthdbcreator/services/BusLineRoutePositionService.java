@@ -1,7 +1,7 @@
 package com.manios.oasthdbcreator.services;
 
 import com.manios.oasthdbcreator.util.HttpUtil;
-import com.manios.oasthdbcreator.model.RouteWaypoint;
+import com.manios.oasthdbcreator.model.GeoPosition;
 import com.manios.oasthdbcreator.parser.BusStopPositionParser;
 import java.io.IOException;
 import java.util.List;
@@ -14,7 +14,7 @@ public class BusLineRoutePositionService {
     public static final char DIRECTION_MOBILE_RETURN = '2';
     private static final String LINE_AND_STOP_POSITIONS_URL_GR = "http://m.oasth.gr/index.php?md=6&sn=3&line=%d&dir=%c";
 
-    public List<RouteWaypoint> getBusRouteWaypoints(int busLineUid, int busLineGroupUid, char direction) {
+    public List<GeoPosition> getBusRouteWaypoints(int busLineUid, int busLineGroupUid, char direction) {
 
         String responseGr = "";
         String urlString = String.format(LINE_AND_STOP_POSITIONS_URL_GR, busLineUid, direction);
@@ -26,7 +26,7 @@ public class BusLineRoutePositionService {
         }
 
 
-        return new BusStopPositionParser().setHttpResponse(responseGr).getRouteWayPoints();
+        return null;
 
     }
 }

@@ -14,6 +14,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j.version>1.7.5</slf4j.version>
         <logback.version>1.0.13</logback.version>
+        <jackson2.version>2.2.2</jackson2.version>
         <doclava.version>1.0.5</doclava.version>
     </properties>
 
@@ -44,6 +45,18 @@
             <version>${logback.version}</version>
         </dependency>
         
+        <!-- Jackson 2 Support -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${jackson2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.2.2</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
     
     <build>   
