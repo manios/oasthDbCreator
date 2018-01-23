@@ -1,0 +1,122 @@
+swagger: '2.0'
+info:
+  title: Oasth desktop site REST API
+  description: Ydatabill REST API for the win. Και μερικά ελληνικά γιατί έχουμε αποξενωθεί εντελώς.
+  version: 0.1.0
+host: oasth.gr
+schemes:
+  - 'http'
+basePath: '/'
+produces:
+  - text/html
+paths:
+  /{lang}/stopinfo/updateArrivals/{stopId}/?a=1:
+    post:
+      summary: Starts a new period calculation procedure
+      description: |
+        wwdd
+      operationId: lineArrivals
+      produces:
+        - text/html
+      parameters:
+        - in: path
+          name: lang
+          description: Route direction
+          required: true
+          type: string
+          enum:
+          - el
+          - en
+        - in: path
+          name: stopId
+          description: Calculation execution request object
+          required: true
+          type: string
+        - in: header
+          name: X-Requested-With
+          description: ajax header
+          required: true
+          type: string
+          default: 'XMLHttpRequest'
+          collectionFormat: csv
+      responses:
+        '200':
+          description: A list of Bus lines which arrive at the given stop
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/BusLineArrivalDTO'
+  /{lang}/buspositions/{direction}/{lineId}/?a=1:
+    post:
+      summary: Starts a new period calculation procedure
+      description: |
+        wwdd
+      operationId: linePositions
+      produces:
+        - text/html
+      parameters:
+        - in: path
+          name: lang
+          description: Language in which the results are going to be returned. Currently only Greek and English are supported.
+          required: true
+          type: string
+          enum:
+          - el
+          - en
+        - in: path
+          name: direction
+          description: |
+            Route direction. Most of bus lines have two directions: Go and Return. However, a minority ob bus lines has circular routes, thus only "Go" direction.
+          required: true
+          type: string
+          default: go
+          enum:
+          - go
+          - come
+        - in: path
+          name: lineId
+          description: Calculation execution request object
+          required: true
+          type: string
+        - in: header
+          name: X-Requested-With
+          description: ajax header
+          required: true
+          type: string
+          default: 'XMLHttpRequest'
+          collectionFormat: csv
+      responses:
+        '200':
+          description: A list of Bus lines which arrive at the given stop
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/GeoPosition'              
+definitions:
+  GeoPosition:
+    type: object
+    properties:
+      longitute:
+        type: number
+        format: float
+        description: |
+          a list of previous calculation period ids. 
+      lattitute:
+        type: number
+        format: float
+        description: |
+          a list of previous calculation period ids.     
+  BusLineArrivalDTO:
+     type: object
+     properties:
+       name:
+         type: string
+       number:
+         type: string
+       arrival:
+         type: array
+         items:
+           type: integer
+           format: int32
+
+

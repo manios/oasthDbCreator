@@ -1,0 +1,75 @@
+swagger: '2.0'
+info:
+  title: Oasth mobile site REST API
+  description: Ydatabill REST API for the win. Και μερικά ελληνικά γιατί έχουμε αποξενωθεί εντελώς.
+  version: 0.1.0
+host: m.oasth.gr
+schemes:
+  - 'http'
+basePath: '/'
+produces:
+  - text/html
+paths:
+  /index.php?md=6&sn=4&ref=1:
+    get:
+      summary: Starts a new period calculation procedure
+      description: |
+        wwdd
+      operationId: calculatePeriod
+      produces:
+        - text/html
+      parameters:
+        - in: query
+          name: line
+          description: Calculation execution request object
+          required: true
+          type: number
+          format: int32
+        - in: query
+          name: dir
+          description: Route direction
+          required: true
+          type: string
+          enum:
+          - 1
+          - 2
+        - in: header
+          name: X-Requested-With
+          description: ajax header
+          required: true
+          type: string
+          default: 'XMLHttpRequest'
+          collectionFormat: csv
+      responses:
+        '200':
+          description: A list of Bus lines which arrive at the given stop
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/BusLineArrival'
+definitions:
+  GeoPosition:
+    type: object
+    properties:
+      longitute:
+        type: number
+        format: float
+        description: |
+          a list of previous calculation period ids. It is only required if we want to calculate **USER_DEFINED** consumptions.
+      lattitute:
+        type: number
+        format: float
+        description: |
+          a list of previous calculation period ids. It is only required if we want to calculate **USER_DEFINED** consumptions.    
+  BusLineArrival:
+     type: object
+     properties:
+       name:
+         type: string
+       number:
+         type: string
+       vehicle:
+         type: string
+       arrival:
+         type: number
+         format: int32

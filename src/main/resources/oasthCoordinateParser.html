@@ -73,8 +73,8 @@
 
 
             function testbob() {
-                var inputEncoded = document.getElementById("text1").value;
-                document.write('<pre>' + aniMarker(inputEncoded) + '</pre>');
+                var inputEncoded = document.getElementById("text2").value;
+                document.getElementById("text2").value = aniMarker(inputEncoded);
                 //alert(aniMarker(inputEncoded));
 
             }
@@ -83,7 +83,8 @@
     </head>
     <body>
         <input type="button" id="testo" onclick="testbob()" value="Decode">
-        <input type="text" id="text1" >
-
+        <textarea rows="4" cols="50" id="text2" >
+         Input your output!!
+        </textarea> 
     </body>
 </html>
